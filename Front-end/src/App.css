@@ -7,7 +7,10 @@
   /* margin: 0; */
   /* padding: 0; */
 }
-
+body,html{
+  height: 100% !important;
+  overflow: auto !important;
+}
 .blog-h1 {
   font-size: 70px;
   font-weight: 500;

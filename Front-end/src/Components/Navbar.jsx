@@ -6,11 +6,41 @@ import { FaVault } from "react-icons/fa6";
 import { RiUserSettingsFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import image from "../assets/text-logo.png";
+import { useEffect } from "react";
+import { Offcanvas } from "bootstrap";
 
 const Navbar = () => {
+  useEffect(() => {
+    const offcanvasElement = document.getElementById('offcanvasNavbar2');
+    if (offcanvasElement) {
+      const offcanvasInstance = new Offcanvas(offcanvasElement);
+      const links = offcanvasElement.querySelectorAll('.nav-link');
+
+      const handleLinkClick = () => {
+        offcanvasInstance.hide();
+
+        // Manually remove the backdrop
+        const backdrop = document.querySelector('.offcanvas-backdrop');
+        if (backdrop) {
+          backdrop.remove();
+        }
+      };
+
+      links.forEach(link => {
+        link.addEventListener('click', handleLinkClick);
+      });
+
+      return () => {
+        links.forEach(link => {
+          link.removeEventListener('click', handleLinkClick);
+        });
+      };
+    }
+  }, []);
+
   return (
     <nav
-      className="navbar navbar-expand-lg navbar-white  border nav-body"
+      className="navbar navbar-expand-lg navbar-white border nav-body"
       aria-label="Offcanvas navbar large"
     >
       <div className="container-fluid">
@@ -48,20 +78,19 @@ const Navbar = () => {
           </div>
           <div className="offcanvas-body">
             <ul
-              className="navbar-nav  d-flex justify-content-center "
+              className="navbar-nav d-flex justify-content-center"
               style={{ width: "100%" }}
             >
               <li>
                 <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center ">
+                  <div className="nav-icons d-flex justify-content-center">
                     <IoHome
                       style={{ fontSize: "1.5rem", color: "rgb(51, 49, 49)" }}
                     />
                   </div>
                   <Link
                     to="/home/dashboard"
-                    className="nav-link nav-item "
-                    onClick={() => {}}
+                    className="nav-link nav-item"
                   >
                     Dashboard
                   </Link>
@@ -69,15 +98,14 @@ const Navbar = () => {
               </li>
               <li>
                 <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center ">
+                  <div className="nav-icons d-flex justify-content-center">
                     <GiHealthNormal
                       style={{ fontSize: "1.5rem", color: "crimson" }}
                     />
                   </div>
                   <Link
                     to="/home/healthcare"
-                    className="nav-link nav-item "
-                    onClick={() => {}}
+                    className="nav-link nav-item"
                   >
                     Healthcare
                   </Link>
@@ -85,15 +113,14 @@ const Navbar = () => {
               </li>
               <li>
                 <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center ">
+                  <div className="nav-icons d-flex justify-content-center">
                     <HiUserGroup
                       style={{ fontSize: "1.5rem", color: "#5ec4e6" }}
                     />
                   </div>
                   <Link
                     to="/home/groupchat"
-                    className="nav-link nav-item "
-                    onClick={() => {}}
+                    className="nav-link nav-item"
                   >
                     Groupchat
                   </Link>
@@ -101,15 +128,14 @@ const Navbar = () => {
               </li>
               <li>
                 <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center ">
+                  <div className="nav-icons d-flex justify-content-center">
                     <GrGallery
                       style={{ fontSize: "1.5rem", color: "#556B2F" }}
                     />
                   </div>
                   <Link
                     to="/home/blogs"
-                    className="nav-link nav-item "
-                    onClick={() => {}}
+                    className="nav-link nav-item"
                   >
                     Blogs
                   </Link>
@@ -117,13 +143,12 @@ const Navbar = () => {
               </li>
               <li>
                 <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center ">
-                    <FaVault style={{ fontSize: "1.5rem", color: " Teal" }} />
+                  <div className="nav-icons d-flex justify-content-center">
+                    <FaVault style={{ fontSize: "1.5rem", color: "Teal" }} />
                   </div>
                   <Link
                     to="/home/Intellivault"
-                    className="nav-link nav-item "
-                    onClick={() => {}}
+                    className="nav-link nav-item"
                   >
                     IntelliVault
                   </Link>
@@ -131,15 +156,14 @@ const Navbar = () => {
               </li>
               <li>
                 <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center ">
+                  <div className="nav-icons d-flex justify-content-center">
                     <RiUserSettingsFill
                       style={{ fontSize: "1.5rem", color: "orange" }}
                     />
                   </div>
                   <Link
                     to="/home/Members"
-                    className="nav-link nav-item "
-                    onClick={() => {}}
+                    className="nav-link nav-item"
                   >
                     Family Settings
                   </Link>
