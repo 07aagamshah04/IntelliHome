@@ -1,0 +1,27 @@
+intellihome:
+
+1). Health care(chatbot)
+2). Finance
+3). Home Inventory
+4). Grocery list
+5). Digital Documents or Records
+6). Family Trip Planning
+7). Password Locker
+8). Dashboard / Calendar and Schedule =>{//show the online users at the time}
+9). Emergency (send mails to all members )
+
+
+page-1: Overview
+
+
+LOGIN PAGE:
+
+Login page 
+input fields->username,password
+
+Registration Page
+input fields-> firstname ,last name,email,password,confirm password,DOB,Gender,Verification code,Terms of Service and Privacy Policy Agreement,phone Number,Age
+
+
+
+
