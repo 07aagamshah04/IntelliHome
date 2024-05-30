@@ -49,8 +49,13 @@ const RegistrationPage = () => {
       pass2.current.value === "" ||
       pass1.current.value !== pass2.current.value
     ) {
-      // alert("WRONG INPUTS ENTERED OR FIELD IS MISSING OR PASSWORD INCORRECT");
-      // return;
+      alert("WRONG INPUTS ENTERED OR FIELD IS MISSING OR PASSWORD INCORRECT");
+      return;
+    }
+
+    if (pass1.current.value.length !== 8) {
+      alert("PASSWORD MUST CONTAINS 8 DIGITS OR CHARACTERS");
+      return;
     }
 
     let age = todayDate.getFullYear() - DobDate.getFullYear();
@@ -64,16 +69,13 @@ const RegistrationPage = () => {
     } else {
       SetAge(age);
     }
-    SetEmailChecker(true);
     try {
       const emailData = {
-        name: uname.current.value,
         email: email.current.value,
-        otp: Otp,
       };
       //When deployed API change it
       const response = await fetch(
-        "http://localhost:8000/api/users/send-email",
+        "http://localhost:8000/api/users/verify-email",
         {
           method: "POST",
           headers: {
@@ -83,13 +85,39 @@ const RegistrationPage = () => {
         }
       );
       if (response.ok) {
-        alert("OTP SENT TO YOUR EMAIL");
+        SetEmailChecker(true);
+        try {
+          const emailData = {
+            name: uname.current.value,
+            email: email.current.value,
+            otp: Otp,
+          };
+          //When deployed API change it
+          const response = await fetch(
+            "http://localhost:8000/api/users/send-email",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(emailData),
+            }
+          );
+          if (response.ok) {
+            alert("OTP SENT TO YOUR EMAIL");
+          } else {
+            const errorData = await response.json();
+            alert(errorData.msg);
+          }
+        } catch (error) {
+          console.error("Error adding user:", error);
+        }
       } else {
         const errorData = await response.json();
         alert(errorData.msg);
       }
     } catch (error) {
-      console.error("Error adding user:", error);
+      alert("Email-id already exists");
     }
   };
 

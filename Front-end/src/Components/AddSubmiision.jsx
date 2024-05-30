@@ -201,6 +201,7 @@ const AddSubmiision = () => {
           const pdfFiles = droppedFiles.filter(
             (file) => file.type === "application/pdf"
           );
+          // console.log(imageFiles);
           setAadhar([...aadhar, ...imageFiles, ...pdfFiles]);
         }
       } else if (folderName === "PAN CARD") {
@@ -295,30 +296,32 @@ const AddSubmiision = () => {
               >
                 {aadhar.map((file, index) => (
                   <div
-                  key={index}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "10px",
-                    color: "grey",
-                  }}
-                >
-                  <CiFolderOn style={{ cursor: "pointer" }} />
-                  <span
-                    style={{ flex: 1, cursor: "pointer" }}
-                    onClick={() => handleItemClick(file)}
+                    key={index}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "10px",
+                      color: "grey",
+                    }}
                   >
-                    {file.name}
-                  </span>
-                  <span style={{ marginRight: "10px" }}>{`${file.size}B`}</span>
-                  <BsTrash
-                    onClick={() => handleDeleteAadhar(index)}
-                    style={{ cursor: "pointer", marginRight: "10px" }}
-                  />
-                  <a href={URL.createObjectURL(file)} download>
-                    <BsDownload style={{ cursor: "pointer" }} />
-                  </a>
-                </div>
+                    <CiFolderOn style={{ cursor: "pointer" }} />
+                    <span
+                      style={{ flex: 1, cursor: "pointer" }}
+                      onClick={() => handleItemClick(file)}
+                    >
+                      {file.name}
+                    </span>
+                    <span
+                      style={{ marginRight: "10px" }}
+                    >{`${file.size}B`}</span>
+                    <BsTrash
+                      onClick={() => handleDeleteAadhar(index)}
+                      style={{ cursor: "pointer", marginRight: "10px" }}
+                    />
+                    <a href={URL.createObjectURL(file)} download>
+                      <BsDownload style={{ cursor: "pointer" }} />
+                    </a>
+                  </div>
                 ))}
                 {aadhar.length === 0 && (
                   <p

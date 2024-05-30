@@ -27,6 +27,11 @@ const SignInPage = () => {
     evt.preventDefault();
     if (email.current.value === "" || pass.current.value === "") {
       alert("DON'T LEAVE ANY FIELD BLANK");
+      return;
+    }
+    if (pass.current.value.length !== 8) {
+      alert("Your password must be of 8 characters");
+      return;
     }
     //validate email
     //if true then validate password by checking that password is of correct email or not

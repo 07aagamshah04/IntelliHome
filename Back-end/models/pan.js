@@ -1,24 +1,28 @@
 const mongoose = require("mongoose");
 
 //Schema designing of Mongoose
-const fileSchema = new mongoose.Schema(
+const panSchema = new mongoose.Schema(
   {
     file: {
       type: String,
       required: true,
     },
-    title: {
+    filename: {
       type: String,
       required: true,
     },
-    text: {
+    size: {
       type: String,
       required: true,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "family",
     },
   },
   { timestamps: true }
 );
 //Now making model of this schema
-const Files = mongoose.model("files", fileSchema);
+const Pan = mongoose.model("pan", panSchema);
 
-module.exports = Files;
+module.exports = Pan;

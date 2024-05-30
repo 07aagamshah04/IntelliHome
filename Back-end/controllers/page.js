@@ -14,16 +14,20 @@ async function createNewUser(req, res) {
     return res.status(400).json({ msg: "All fields are required" });
   }
   // console.log(body);
-  const result = await User.create({
-    userName: body.userName,
-    email: body.email,
-    gender: body.gender,
-    dob: body.dob,
-    password: body.password,
-    role: body.role,
-  });
+  try {
+    const result = await User.create({
+      userName: body.userName,
+      email: body.email,
+      gender: body.gender,
+      dob: body.dob,
+      password: body.password,
+      role: body.role,
+    });
 
-  return res.status(201).json({ msg: "succedd", id: result._id });
+    return res.status(201).json({ msg: "succedd", id: result._id });
+  } catch (error) {
+    return res.status(409).json({ msg: "Email-id already exists" });
+  }
 }
 
 async function signInUser(req, res) {
