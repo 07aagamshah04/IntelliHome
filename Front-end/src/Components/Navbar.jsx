@@ -6,174 +6,193 @@ import { FaVault } from "react-icons/fa6";
 import { RiUserSettingsFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import image from "../assets/text-logo.png";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Offcanvas } from "bootstrap";
+import { Modal, Button } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 const Navbar = () => {
+  const [show, setShow] = useState(false);
+
   useEffect(() => {
-    const offcanvasElement = document.getElementById('offcanvasNavbar2');
+    const offcanvasElement = document.getElementById("offcanvasNavbar2");
     if (offcanvasElement) {
+      const Offcanvas = window.bootstrap.Offcanvas;
       const offcanvasInstance = new Offcanvas(offcanvasElement);
-      const links = offcanvasElement.querySelectorAll('.nav-link');
+      const links = offcanvasElement.querySelectorAll(".nav-link");
 
       const handleLinkClick = () => {
         offcanvasInstance.hide();
 
         // Manually remove the backdrop
-        const backdrop = document.querySelector('.offcanvas-backdrop');
+        const backdrop = document.querySelector(".offcanvas-backdrop");
         if (backdrop) {
           backdrop.remove();
         }
       };
 
-      links.forEach(link => {
-        link.addEventListener('click', handleLinkClick);
+      links.forEach((link) => {
+        link.addEventListener("click", handleLinkClick);
       });
 
       return () => {
-        links.forEach(link => {
-          link.removeEventListener('click', handleLinkClick);
+        links.forEach((link) => {
+          link.removeEventListener("click", handleLinkClick);
         });
       };
     }
   }, []);
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const handleLogout = () => {
+    fetch("/logout", {
+      method: "POST",
+      credentials: "same-origin",
+    }).then((response) => {
+      if (response.ok) {
+        window.location.href = "/login";
+      } else {
+        alert("Logout failed.");
+      }
+    });
+  };
+
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-white border nav-body"
-      aria-label="Offcanvas navbar large"
-    >
-      <div className="container-fluid">
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasNavbar2"
-          aria-controls="offcanvasNavbar2"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <Link to="/">
-          <img src={image} alt="" className="intelli-logo" />
-        </Link>
-        <div
-          className="offcanvas offcanvas-start text-bg-white"
-          tabIndex="-1"
-          id="offcanvasNavbar2"
-          aria-labelledby="offcanvasNavbar2Label"
-        >
-          <div className="offcanvas-header border-bottom">
-            <h5 className="offcanvas-title" id="offcanvasNavbar2Label">
-              <Link to="/">
-                <img src={image} alt="" className="intelli-logo" />
-              </Link>
-            </h5>
-            <button
-              type="button"
-              className="btn-close btn-close-black"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div className="offcanvas-body">
-            <ul
-              className="navbar-nav d-flex justify-content-center"
-              style={{ width: "100%" }}
-            >
-              <li>
-                <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center">
-                    <IoHome
-                      style={{ fontSize: "1.5rem", color: "rgb(51, 49, 49)" }}
-                    />
+    <>
+      <nav
+        className="navbar navbar-expand-lg navbar-white border nav-body"
+        aria-label="Offcanvas navbar large"
+      >
+        <div className="container-fluid">
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar2"
+            aria-controls="offcanvasNavbar2"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <Link to="/">
+            <img src={image} alt="" className="intelli-logo" />
+          </Link>
+          <div
+            className="offcanvas offcanvas-start text-bg-white"
+            tabIndex="-1"
+            id="offcanvasNavbar2"
+            aria-labelledby="offcanvasNavbar2Label"
+          >
+            <div className="offcanvas-header border-bottom">
+              <h5 className="offcanvas-title" id="offcanvasNavbar2Label">
+                <Link to="/">
+                  <img src={image} alt="" className="intelli-logo" />
+                </Link>
+              </h5>
+              <button
+                type="button"
+                className="btn-close btn-close-black"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="offcanvas-body">
+              <ul
+                className="navbar-nav d-flex justify-content-center"
+                style={{ width: "100%" }}
+              >
+                <li>
+                  <div className="d-flex align-items-center nav-fields">
+                    <div className="nav-icons d-flex justify-content-center">
+                      <IoHome
+                        style={{ fontSize: "1.5rem", color: "rgb(51, 49, 49)" }}
+                      />
+                    </div>
+                    <Link to="/home/dashboard" className="nav-link nav-item">
+                      Dashboard
+                    </Link>
                   </div>
-                  <Link
-                    to="/home/dashboard"
-                    className="nav-link nav-item"
-                  >
-                    Dashboard
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center">
-                    <GiHealthNormal
-                      style={{ fontSize: "1.5rem", color: "crimson" }}
-                    />
+                </li>
+                <li>
+                  <div className="d-flex align-items-center nav-fields">
+                    <div className="nav-icons d-flex justify-content-center">
+                      <GiHealthNormal
+                        style={{ fontSize: "1.5rem", color: "crimson" }}
+                      />
+                    </div>
+                    <Link to="/home/healthcare" className="nav-link nav-item">
+                      Healthcare
+                    </Link>
                   </div>
-                  <Link
-                    to="/home/healthcare"
-                    className="nav-link nav-item"
-                  >
-                    Healthcare
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center">
-                    <HiUserGroup
-                      style={{ fontSize: "1.5rem", color: "#5ec4e6" }}
-                    />
+                </li>
+                <li>
+                  <div className="d-flex align-items-center nav-fields">
+                    <div className="nav-icons d-flex justify-content-center">
+                      <HiUserGroup
+                        style={{ fontSize: "1.5rem", color: "#5ec4e6" }}
+                      />
+                    </div>
+                    <Link to="/home/groupchat" className="nav-link nav-item">
+                      Groupchat
+                    </Link>
                   </div>
-                  <Link
-                    to="/home/groupchat"
-                    className="nav-link nav-item"
-                  >
-                    Groupchat
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center">
-                    <GrGallery
-                      style={{ fontSize: "1.5rem", color: "#556B2F" }}
-                    />
+                </li>
+                <li>
+                  <div className="d-flex align-items-center nav-fields">
+                    <div className="nav-icons d-flex justify-content-center">
+                      <GrGallery
+                        style={{ fontSize: "1.5rem", color: "#556B2F" }}
+                      />
+                    </div>
+                    <Link to="/home/blogs" className="nav-link nav-item">
+                      Blogs
+                    </Link>
                   </div>
-                  <Link
-                    to="/home/blogs"
-                    className="nav-link nav-item"
-                  >
-                    Blogs
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center">
-                    <FaVault style={{ fontSize: "1.5rem", color: "Teal" }} />
+                </li>
+                <li>
+                  <div className="d-flex align-items-center nav-fields">
+                    <div className="nav-icons d-flex justify-content-center">
+                      <FaVault style={{ fontSize: "1.5rem", color: "Teal" }} />
+                    </div>
+                    <Link to="/home/Intellivault" className="nav-link nav-item">
+                      IntelliVault
+                    </Link>
                   </div>
-                  <Link
-                    to="/home/Intellivault"
-                    className="nav-link nav-item"
-                  >
-                    IntelliVault
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="d-flex align-items-center nav-fields">
-                  <div className="nav-icons d-flex justify-content-center">
-                    <RiUserSettingsFill
-                      style={{ fontSize: "1.5rem", color: "orange" }}
-                    />
+                </li>
+                <li>
+                  <div className="d-flex align-items-center nav-fields">
+                    <div className="nav-icons d-flex justify-content-center">
+                      <RiUserSettingsFill
+                        style={{ fontSize: "1.5rem", color: "orange" }}
+                      />
+                    </div>
+                    <Link to="/home/Members" className="nav-link nav-item">
+                      Family Settings
+                    </Link>
                   </div>
-                  <Link
-                    to="/home/Members"
-                    className="nav-link nav-item"
-                  >
-                    Family Settings
-                  </Link>
-                </div>
-              </li>
-            </ul>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Logout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to logout?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleLogout}>
+            Logout
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
 
