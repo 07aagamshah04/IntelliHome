@@ -1,5 +1,4 @@
-/* eslint-disable react/no-unescaped-entities */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -9,37 +8,81 @@ const Posts = () => {
   const [showModal, setShowModal] = useState(false);
   const [postTitle, setPostTitle] = useState("");
   const [postText, setPostText] = useState("");
-  const [imageUrls, setImageUrls] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [posts, setPosts] = useState([]);
 
   const handleFileInputChange = (event) => {
     const files = event.target.files;
-    const urls = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const url = URL.createObjectURL(file);
-      urls.push(url);
-    }
-    setImageUrls(urls);
+    setSelectedFiles(files);
   };
 
-  const handleSubmit = () => {
-    if (postTitle === "" || postText === "" || imageUrls[0] === undefined) {
+  // useEffect(() => {
+  //   // Fetch posts when the component mounts
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const response = await fetch("http://localhost:8000/api/users/posts");
+  //       const data = await response.json();
+  //       console.log(data);
+  //       setPosts([...posts, data]);
+  //     } catch (error) {
+  //       console.error("Error fetching posts:", error);
+  //     }
+  //   };
+
+  //   fetchPosts();
+  // }, []);
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (postTitle === "" || postText === "" || selectedFiles.length === 0) {
       setErrorMessage("*Every field is required");
-    } else {
+      return;
+    }
+
+    try {
+      const base64 = await convertToBase64(selectedFiles[0]);
       const post = {
+        file: base64,
         title: postTitle,
         text: postText,
-        image: imageUrls[0],
       };
-      setPosts([...posts, post]);
 
-      setPostTitle("");
-      setPostText("");
-      setImageUrls([]);
-      setShowModal(false);
+      const response = await fetch("http://localhost:8000/api/users/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(post),
+      });
+
+      if (response.ok) {
+        alert("Your Post has been posted");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      console.error("Error adding user:", error);
     }
+
+    setPostTitle("");
+    setPostText("");
+    setSelectedFiles([]);
+    setShowModal(false);
   };
 
   const handleDelete = (index) => {
@@ -48,7 +91,7 @@ const Posts = () => {
 
   return (
     <div className={styles.postiii}>
-      <div className="container  text-center">
+      <div className="container text-center">
         <blockquote className="blockquote">
           <p className="mb-0 blog-h1">
             "Family is not an important thing. It's everything."
@@ -80,6 +123,7 @@ const Posts = () => {
             className="form-control mb-3"
             onChange={handleFileInputChange}
             multiple
+            accept=".jpeg, .png, .jpg"
           />
           {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
         </Modal.Body>
@@ -94,30 +138,31 @@ const Posts = () => {
       </Modal>
 
       <section className={styles.articles}>
-        {posts.map((post, index) => (
-          <article key={index} className={styles["article-wrapper"]}>
-            <figure>
-              <img src={post.image} alt="" />
-            </figure>
-            <div className={styles["article-body"]}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <h2>{post.title}</h2>
-                <MdDelete
-                  size={25}
-                  className={styles["delete-icon"]}
-                  onClick={() => handleDelete(index)}
-                />
+        {posts &&
+          posts.map((post, index) => (
+            <article key={index} className={styles["article-wrapper"]}>
+              <figure>
+                <img src={post.file} alt={post.title} />
+              </figure>
+              <div className={styles["article-body"]}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h2>{post.title}</h2>
+                  <MdDelete
+                    size={25}
+                    className={styles["delete-icon"]}
+                    onClick={() => handleDelete(index)}
+                  />
+                </div>
+                <p>{post.text}</p>
               </div>
-              <p>{post.text}</p>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
       </section>
     </div>
   );

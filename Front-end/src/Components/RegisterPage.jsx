@@ -34,7 +34,7 @@ const RegistrationPage = () => {
     Setotp(a);
   }, []);
 
-  const doWork = (e) => {
+  const doWork = async (e) => {
     e.preventDefault();
     const DobDate = new Date(dob.current.value);
     const todayDate = new Date();
@@ -49,8 +49,13 @@ const RegistrationPage = () => {
       pass2.current.value === "" ||
       pass1.current.value !== pass2.current.value
     ) {
-      // alert("WRONG INPUTS ENTERED OR FIELD IS MISSING OR PASSWORD INCORRECT");
-      // return;
+      alert("WRONG INPUTS ENTERED OR FIELD IS MISSING OR PASSWORD INCORRECT");
+      return;
+    }
+
+    if (pass1.current.value.length !== 8) {
+      alert("PASSWORD MUST CONTAINS 8 DIGITS OR CHARACTERS");
+      return;
     }
 
     let age = todayDate.getFullYear() - DobDate.getFullYear();
@@ -60,19 +65,95 @@ const RegistrationPage = () => {
     }
     if (age < 0) {
       alert("WRONG DOB ENTERED");
+      return;
     } else {
       SetAge(age);
     }
-    SetEmailChecker(true);
-    navigate("/home/dashboard");
+    try {
+      const emailData = {
+        email: email.current.value,
+      };
+      //When deployed API change it
+      const response = await fetch(
+        "http://localhost:8000/api/users/verify-email",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(emailData),
+        }
+      );
+      if (response.ok) {
+        SetEmailChecker(true);
+        try {
+          const emailData = {
+            name: uname.current.value,
+            email: email.current.value,
+            otp: Otp,
+          };
+          //When deployed API change it
+          const response = await fetch(
+            "http://localhost:8000/api/users/send-email",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(emailData),
+            }
+          );
+          if (response.ok) {
+            alert("OTP SENT TO YOUR EMAIL");
+          } else {
+            const errorData = await response.json();
+            alert(errorData.msg);
+          }
+        } catch (error) {
+          console.error("Error adding user:", error);
+        }
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      alert("Email-id already exists");
+    }
   };
 
-  const onOtpSubmit = (otp) => {
+  const onOtpSubmit = async (otp) => {
     if (otp === Otp.toString()) {
-      console.log("Right entered");
-      //Here we have to take user to dashboard regardless of console statement
+      try {
+        const formData = {
+          userName: uname.current.value,
+          email: email.current.value,
+          gender: gender.current.value,
+          dob: new Date(dob.current.value),
+          password: pass1.current.value,
+          role: true,
+        };
+        //When deployed API change it
+        const response = await fetch("http://localhost:8000/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+          alert("Thank you for registration!!");
+          navigate("/sign-in");
+        } else {
+          const errorData = await response.json();
+          alert(errorData.msg);
+        }
+      } catch (error) {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
     } else {
       alert("Wrong entered");
+      return;
     }
   };
 
@@ -116,7 +197,7 @@ const RegistrationPage = () => {
             >
               <option value="">Gender</option>
               <option value="male">Male</option>
-              <option value="femal">Female</option>
+              <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
             <i
