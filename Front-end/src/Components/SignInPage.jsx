@@ -23,7 +23,7 @@ const SignInPage = () => {
   const email = useRef("");
   const pass = useRef("");
   const navigate = useNavigate();
-  const Validate = (evt) => {
+  const Validate = async (evt) => {
     evt.preventDefault();
     if (email.current.value === "" || pass.current.value === "") {
       alert("DON'T LEAVE ANY FIELD BLANK");
@@ -31,9 +31,34 @@ const SignInPage = () => {
     //validate email
     //if true then validate password by checking that password is of correct email or not
     //if all things are true then allow him to go to dashboard page
+    try {
+      const userData = {
+        email: email.current.value,
+        password: pass.current.value,
+      };
+      //When deployed API change it
+      //Here credentails are used to allow to add cookie
+      const response = await fetch("http://localhost:8000/api/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+        credentials: "include",
+      });
+      if (response.ok) {
+        alert("Verified successfully");
+        navigate("/home/dashboard");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      alert("Error adding user:", error);
+      return;
+    }
     email.current.value = "";
     pass.current.value = "";
-    navigate("/home/dashboard");
   };
 
   return (
