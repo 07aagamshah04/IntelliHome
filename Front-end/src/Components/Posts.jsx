@@ -17,21 +17,21 @@ const Posts = () => {
     setSelectedFiles(files);
   };
 
-  useEffect(() => {
-    // Fetch posts when the component mounts
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/api/users/posts");
-        const data = await response.json();
-        console.log(data);
-        setPosts([...posts, data]);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
+  // useEffect(() => {
+  //   // Fetch posts when the component mounts
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const response = await fetch("http://localhost:8000/api/users/posts");
+  //       const data = await response.json();
+  //       console.log(data);
+  //       setPosts([...posts, data]);
+  //     } catch (error) {
+  //       console.error("Error fetching posts:", error);
+  //     }
+  //   };
 
-    fetchPosts();
-  }, []);
+  //   fetchPosts();
+  // }, []);
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {

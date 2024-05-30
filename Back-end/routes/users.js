@@ -6,8 +6,9 @@ const {
   UpdateuserByid,
   DeleteuserByid,
   sendEmail,
-  putPost,
-  getPost,
+  verifyEmail,
+  // putPost,
+  // getPost,
 } = require("../controllers/users");
 
 const router = express.Router();
@@ -16,7 +17,9 @@ router.route("/").get(GetAllUsers);
 
 router.route("/send-email").post(sendEmail);
 
-router.route("/posts").post(putPost).get(getPost);
+router.route("/verify-email").post(verifyEmail);
+
+// router.route("/posts").post(putPost).get(getPost);
 
 router
   .route("/:id")
