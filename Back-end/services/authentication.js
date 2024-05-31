@@ -9,13 +9,21 @@ function createTokenForUser(user) {
     password: user.password,
     role: user.role,
   };
-  const token = JWT.sign(payload, SECRET);
+  const options = {
+    expiresIn: "1d", // Token expires in 1 day
+  };
+  const token = JWT.sign(payload, SECRET, options);
   return token;
 }
 
 function validateToken(token) {
-  const payload = JWT.verify(token, SECRET);
-  return payload;
+  try {
+    const payload = JWT.verify(token, SECRET);
+    return payload;
+  } catch (error) {
+    // Handle token validation error, e.g., token expired, invalid token, etc.
+    throw new Error("Invalid or expired token");
+  }
 }
 
 module.exports = {

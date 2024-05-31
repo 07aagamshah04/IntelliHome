@@ -1,12 +1,14 @@
 const User = require("../models/users");
 const nodeMailer = require("nodemailer");
 // const Files = require("../models/files");
+const EMAIL = process.env.EMAIL;
+const PASSWORD = process.env.PASSWORD;
 
 const transporter = nodeMailer.createTransport({
   service: "gmail",
   auth: {
-    user: "intellihome.official@gmail.com",
-    pass: "sqwu mngn ypnz tyqf",
+    user: EMAIL,
+    pass: PASSWORD,
   },
 });
 
