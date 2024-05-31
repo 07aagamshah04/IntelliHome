@@ -1,7 +1,7 @@
 const User = require("../models/users");
 async function createNewUser(req, res) {
   const body = req.body;
-
+  console.log(req.query === null);
   if (
     !body ||
     !body.userName ||
@@ -21,7 +21,7 @@ async function createNewUser(req, res) {
       gender: body.gender,
       dob: body.dob,
       password: body.password,
-      role: body.role,
+      role:Object.keys(req.query).length === 0?body.role:false,
     });
 
     return res.status(201).json({ msg: "succedd", id: result._id });

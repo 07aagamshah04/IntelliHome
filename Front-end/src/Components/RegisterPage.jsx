@@ -38,7 +38,6 @@ const RegistrationPage = () => {
     e.preventDefault();
     const DobDate = new Date(dob.current.value);
     const todayDate = new Date();
-
     if (
       dob.current.value === "" ||
       uname.current.value === "" ||
