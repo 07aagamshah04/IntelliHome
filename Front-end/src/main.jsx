@@ -71,7 +71,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
-    <App /> 
+    <App />
     <RouterProvider router={router} />
   </>
 );
