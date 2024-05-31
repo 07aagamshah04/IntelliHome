@@ -1,62 +1,41 @@
+import { useState } from "react";
 import { IoHome } from "react-icons/io5";
 import { GiHealthNormal } from "react-icons/gi";
 import { HiUserGroup } from "react-icons/hi2";
 import { GrGallery } from "react-icons/gr";
 import { FaVault } from "react-icons/fa6";
 import { RiUserSettingsFill } from "react-icons/ri";
+import { RiLogoutCircleLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import image from "../assets/text-logo.png";
-import { useEffect, useState } from "react";
-import { Offcanvas } from "bootstrap";
-import { Modal, Button } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { Modal, Button, Offcanvas } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Navbar = () => {
-  const [show, setShow] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
 
-  useEffect(() => {
-    const offcanvasElement = document.getElementById("offcanvasNavbar2");
-    if (offcanvasElement) {
-      const Offcanvas = window.bootstrap.Offcanvas;
-      const offcanvasInstance = new Offcanvas(offcanvasElement);
-      const links = offcanvasElement.querySelectorAll(".nav-link");
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
 
-      const handleLinkClick = () => {
-        offcanvasInstance.hide();
-
-        // Manually remove the backdrop
-        const backdrop = document.querySelector(".offcanvas-backdrop");
-        if (backdrop) {
-          backdrop.remove();
-        }
-      };
-
-      links.forEach((link) => {
-        link.addEventListener("click", handleLinkClick);
+  const handleLogout = async () => {
+    try {
+      //When deployed API change it
+      const response = await fetch("http://localhost:8000/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       });
-
-      return () => {
-        links.forEach((link) => {
-          link.removeEventListener("click", handleLinkClick);
-        });
-      };
-    }
-  }, []);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const handleLogout = () => {
-    fetch("/logout", {
-      method: "POST",
-      credentials: "same-origin",
-    }).then((response) => {
       if (response.ok) {
-        window.location.href = "/login";
+        window.location.href = "/";
       } else {
-        alert("Logout failed.");
+        alert("Error in logout");
       }
-    });
+    } catch (error) {
+      alert("Error in logout");
+    }
   };
 
   return (
@@ -69,36 +48,74 @@ const Navbar = () => {
           <button
             className="navbar-toggler"
             type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasNavbar2"
-            aria-controls="offcanvasNavbar2"
-            aria-label="Toggle navigation"
+            onClick={() => setShowOffcanvas(true)}
           >
             <span className="navbar-toggler-icon"></span>
           </button>
           <Link to="/">
-            <img src={image} alt="" className="intelli-logo" />
+            <img
+              src={image}
+              alt=""
+              className="intelli-logo"
+              onClick={handleLogout}
+            />
           </Link>
-          <div
-            className="offcanvas offcanvas-start text-bg-white"
-            tabIndex="-1"
-            id="offcanvasNavbar2"
-            aria-labelledby="offcanvasNavbar2Label"
+          <div className="collapse navbar-collapse d-none d-lg-flex justify-content-center">
+            <ul className="navbar-nav gap-20 ">
+              <li className="nav-item">
+                <Link to="/home/dashboard" className="nav-link">
+                  Dashboard
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/home/healthcare" className="nav-link">
+                  Healthcare
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/home/groupchat" className="nav-link">
+                  Groupchat
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/home/blogs" className="nav-link">
+                  Blogs
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/home/Intellivault" className="nav-link">
+                  IntelliVault
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/home/Members" className="nav-link">
+                  Family Settings
+                </Link>
+              </li>
+              <li className="nav-item">
+                <button
+                  className="nav-link btn btn-link"
+                  onClick={handleShowModal}
+                  style={{ textTransform: "none" }}
+                >
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
+          <Offcanvas
+            show={showOffcanvas}
+            onHide={() => setShowOffcanvas(false)}
+            placement="start"
           >
-            <div className="offcanvas-header border-bottom">
-              <h5 className="offcanvas-title" id="offcanvasNavbar2Label">
+            <Offcanvas.Header closeButton>
+              <Offcanvas.Title>
                 <Link to="/">
                   <img src={image} alt="" className="intelli-logo" />
                 </Link>
-              </h5>
-              <button
-                type="button"
-                className="btn-close btn-close-black"
-                data-bs-dismiss="offcanvas"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="offcanvas-body">
+              </Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
               <ul
                 className="navbar-nav d-flex justify-content-center"
                 style={{ width: "100%" }}
@@ -173,18 +190,38 @@ const Navbar = () => {
                     </Link>
                   </div>
                 </li>
+                <li>
+                  <div className="d-flex align-items-center nav-fields">
+                    {/* <div className="nav-icons d-flex justify-content-center">
+                      <RiUserSettingsFill style={{ fontSize: "1.5rem", color: "orange" }} />
+                    </div> */}
+                    <div className="nav-icons d-flex justify-content-center">
+                      <RiLogoutCircleLine
+                        style={{ fontSize: "1.5rem", color: "black" }}
+                      />
+                    </div>
+                    <button
+                      className="nav-link nav-item btn btn-link"
+                      onClick={handleShowModal}
+                      style={{ textTransform: "none" }}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </li>
               </ul>
-            </div>
-          </div>
+            </Offcanvas.Body>
+          </Offcanvas>
         </div>
       </nav>
-      <Modal show={show} onHide={handleClose}>
+
+      <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Logout</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to logout?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleCloseModal}>
             Close
           </Button>
           <Button variant="primary" onClick={handleLogout}>
