@@ -1,13 +1,16 @@
 const JWT = require("jsonwebtoken");
+const Family = require("../models/family");
 
 const SECRET = process.env.SECRET;
 
-function createTokenForUser(user) {
+async function createTokenForUser(user) {
+  const family = await Family.findOne({ members: user._id });
   const payload = {
     _id: user._id,
     email: user.email,
     password: user.password,
     role: user.role,
+    familyId: family._id,
   };
   const options = {
     expiresIn: "1d", // Token expires in 1 day
