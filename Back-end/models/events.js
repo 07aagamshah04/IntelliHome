@@ -11,6 +11,10 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    eventTime: {
+      type: String,
+      required: true,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "family",
