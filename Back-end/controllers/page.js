@@ -51,7 +51,9 @@ async function signInUser(req, res) {
     );
 
     // console.log(token);
-
+    // res.cookie("uid", token, {
+    //   domain: "www.shorturl.com",
+    // });
     return res.cookie("token", token).status(201).json({ msg: "succed" });
   } catch (error) {
     return res
@@ -60,7 +62,13 @@ async function signInUser(req, res) {
   }
 }
 
+async function logoutUser(req, res) {
+  res.clearCookie("token");
+  return res.status(201).json({ msg: "Token deleted" });
+}
+
 module.exports = {
   createNewUser,
   signInUser,
+  logoutUser,
 };

@@ -5,6 +5,7 @@ import { HiUserGroup } from "react-icons/hi2";
 import { GrGallery } from "react-icons/gr";
 import { FaVault } from "react-icons/fa6";
 import { RiUserSettingsFill } from "react-icons/ri";
+import { RiLogoutCircleLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import image from "../assets/text-logo.png";
 import { Modal, Button, Offcanvas } from "react-bootstrap";
@@ -17,17 +18,24 @@ const Navbar = () => {
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
-  const handleLogout = () => {
-    fetch("/logout", {
-      method: "POST",
-      credentials: "same-origin",
-    }).then((response) => {
+  const handleLogout = async () => {
+    try {
+      //When deployed API change it
+      const response = await fetch("http://localhost:8000/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
       if (response.ok) {
-        window.location.href = "/login";
+        window.location.href = "/";
       } else {
-        alert("Logout failed.");
+        alert("Error in logout");
       }
-    });
+    } catch (error) {
+      alert("Error in logout");
+    }
   };
 
   return (
@@ -45,7 +53,12 @@ const Navbar = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
           <Link to="/">
-            <img src={image} alt="" className="intelli-logo" />
+            <img
+              src={image}
+              alt=""
+              className="intelli-logo"
+              onClick={handleLogout}
+            />
           </Link>
           <div className="collapse navbar-collapse d-none d-lg-flex justify-content-center">
             <ul className="navbar-nav gap-20 ">
@@ -83,6 +96,7 @@ const Navbar = () => {
                 <button
                   className="nav-link btn btn-link"
                   onClick={handleShowModal}
+                  style={{ textTransform: "none" }}
                 >
                   Logout
                 </button>
@@ -181,9 +195,15 @@ const Navbar = () => {
                     {/* <div className="nav-icons d-flex justify-content-center">
                       <RiUserSettingsFill style={{ fontSize: "1.5rem", color: "orange" }} />
                     </div> */}
+                    <div className="nav-icons d-flex justify-content-center">
+                      <RiLogoutCircleLine
+                        style={{ fontSize: "1.5rem", color: "black" }}
+                      />
+                    </div>
                     <button
                       className="nav-link nav-item btn btn-link"
                       onClick={handleShowModal}
+                      style={{ textTransform: "none" }}
                     >
                       Logout
                     </button>
