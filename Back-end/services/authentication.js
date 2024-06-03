@@ -10,6 +10,7 @@ async function createTokenForUser(user) {
     email: user.email,
     password: user.password,
     role: user.role,
+    userName: user.userName,
     familyId: family._id,
   };
   const options = {

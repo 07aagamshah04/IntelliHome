@@ -61,7 +61,8 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
               const data = await response.json();
               let updatedArray = data.data.map((obj) => {
                 let name = obj.userName.split(" ");
-                let shortname = `name.length > 1 ? ${name[0][0]}${name[1][0]} : name[0][0]`;
+                let shortname =
+                  name.length > 1 ? `${name[0][0]}${name[1][0]}` : name[0][0];
                 return { ...obj, logo: shortname.toUpperCase() };
               });
               // console.log(updatedArray);

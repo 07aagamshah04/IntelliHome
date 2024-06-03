@@ -23,6 +23,12 @@ const SignInPage = () => {
   const email = useRef("");
   const pass = useRef("");
   const navigate = useNavigate();
+
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
   const Validate = async (evt) => {
     evt.preventDefault();
     if (email.current.value === "" || pass.current.value === "") {
@@ -37,9 +43,14 @@ const SignInPage = () => {
     //if true then validate password by checking that password is of correct email or not
     //if all things are true then allow him to go to dashboard page
     try {
+      let familyId = getQueryParam("familyId");
+      if (!familyId) {
+        familyId = "nathi bhai";
+      }
       const userData = {
         email: email.current.value,
         password: pass.current.value,
+        familyId: familyId,
       };
       //When deployed API change it
       //Here credentails are used to allow to add cookie
@@ -47,6 +58,7 @@ const SignInPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": true,
         },
         body: JSON.stringify(userData),
         credentials: "include",

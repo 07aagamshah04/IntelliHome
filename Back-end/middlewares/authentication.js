@@ -2,16 +2,20 @@ const { validateToken } = require("../services/authentication");
 
 function checkForAuthenticationCookie(cookieName) {
   return (req, res, next) => {
-    const tokenCookieValue = req.cookies[cookieName];
+    const tokenCookieValue = req.cookies?.[cookieName];
+    // console.log(req);
     if (!tokenCookieValue) {
+      // console.log("Token cookie not found");
       return next();
     }
 
     try {
-      // console.log("called");
       const userPayload = validateToken(tokenCookieValue);
       req.user = userPayload;
-    } catch (error) {}
+      // console.log("Token validated and user payload set", userPayload);
+    } catch (error) {
+      console.log("Error validating token:", error);
+    }
 
     return next();
   };

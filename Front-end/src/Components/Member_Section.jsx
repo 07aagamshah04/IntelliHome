@@ -70,8 +70,7 @@ const MemberSection = () => {
   const deleteMember = async (memberId, familyId) => {
     try {
       const response = await fetch(
-        `
-        http://localhost:8000/api/family-settings/deleteUser`,
+        `http://localhost:8000/api/family-settings/deleteUser`,
         {
           method: "DELETE",
           headers: {

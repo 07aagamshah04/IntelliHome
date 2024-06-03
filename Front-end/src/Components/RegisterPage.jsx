@@ -1,10 +1,3 @@
-/* eslint-disable no-unused-vars */
-/**
- * After correct otp move to dashboard
- * We have to send mail to user for OTP
- * Submitting data to database
- */
-
 import "../colorlib-regform-17/colorlib-regform-17/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css";
 import "../colorlib-regform-17/colorlib-regform-17/css/style.css";
 import image1 from "../colorlib-regform-17/colorlib-regform-17/images/image1.jpg";
@@ -23,16 +16,24 @@ const RegistrationPage = () => {
   const pass1 = useRef("");
   const pass2 = useRef("");
   const navigate = useNavigate();
-  // const OtpGenerator = () => {
-  // 	console.log(Math.floor(Math.random() * 9000) + 1000);
-  // 	Setotp(Math.floor(Math.random() * 9000) + 1000);
-  // }
+
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
 
   useEffect(() => {
     const a = Math.floor(Math.random() * 9000) + 1000;
-    // console.log(a);
     Setotp(a);
   }, []);
+
+  const checkerFunction = () => {
+    let familyId = getQueryParam("familyId");
+    if (!familyId) {
+      familyId = "nathi bhai";
+    }
+    return familyId;
+  };
 
   const doWork = async (e) => {
     e.preventDefault();
@@ -72,7 +73,6 @@ const RegistrationPage = () => {
       const emailData = {
         email: email.current.value,
       };
-      //When deployed API change it
       const response = await fetch(
         "http://localhost:8000/api/users/verify-email",
         {
@@ -91,7 +91,6 @@ const RegistrationPage = () => {
             email: email.current.value,
             otp: Otp,
           };
-          //When deployed API change it
           const response = await fetch(
             "http://localhost:8000/api/users/send-email",
             {
@@ -122,6 +121,14 @@ const RegistrationPage = () => {
 
   const onOtpSubmit = async (otp) => {
     if (otp === Otp.toString()) {
+      let familyId = getQueryParam("familyId");
+      if (!familyId) {
+        familyId = "nathi bhai";
+      }
+      let role = false;
+      if (familyId === "nathi bhai") {
+        role = true;
+      }
       try {
         const formData = {
           userName: uname.current.value,
@@ -129,9 +136,9 @@ const RegistrationPage = () => {
           gender: gender.current.value,
           dob: new Date(dob.current.value),
           password: pass1.current.value,
-          role: true,
+          role: role,
+          familyId: familyId,
         };
-        //When deployed API change it
         const response = await fetch("http://localhost:8000/api/register", {
           method: "POST",
           headers: {
@@ -141,7 +148,7 @@ const RegistrationPage = () => {
         });
         if (response.ok) {
           alert("Thank you for registration!!");
-          navigate("/sign-in");
+          navigate(`/sign-in?familyId=${familyId}`);
         } else {
           const errorData = await response.json();
           alert(errorData.msg);
@@ -154,6 +161,14 @@ const RegistrationPage = () => {
       alert("Wrong entered");
       return;
     }
+  };
+
+  const handleSignInClick = (e) => {
+    e.preventDefault();
+    const familyId = checkerFunction();
+    navigate(
+      `/sign-in${familyId !== "nathi bhai" ? `?familyId=${familyId}` : ""}`
+    );
   };
 
   return (
@@ -241,7 +256,11 @@ const RegistrationPage = () => {
           </button>
           <div className="text-center fs-5 mt-4">
             Already have an Account ?
-            <Link to="/sign-in" className="register-signIn">
+            <Link
+              to="#"
+              onClick={handleSignInClick}
+              className="register-signIn"
+            >
               &nbsp;Sign in
             </Link>
           </div>
