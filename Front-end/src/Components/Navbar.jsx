@@ -1,26 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
 import { GiHealthNormal } from "react-icons/gi";
 import { HiUserGroup } from "react-icons/hi2";
 import { GrGallery } from "react-icons/gr";
 import { FaVault } from "react-icons/fa6";
-import { RiUserSettingsFill } from "react-icons/ri";
-import { RiLogoutCircleLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { RiUserSettingsFill, RiLogoutCircleLine } from "react-icons/ri";
 import image from "../assets/text-logo.png";
 import { Modal, Button, Offcanvas } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Navbar = () => {
+  const location = useLocation();
   const [showModal, setShowModal] = useState(false);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [selected, setSelected] = useState("");
+
+  useEffect(() => {
+    const path = location.pathname.split("/")[2];
+    setSelected(path);
+  }, [location]);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
+  const handleCloseOffcanvas = () => setShowOffcanvas(false);
 
   const handleLogout = async () => {
     try {
-      //When deployed API change it
       const response = await fetch("http://localhost:8000/api/logout", {
         method: "POST",
         headers: {
@@ -61,33 +67,63 @@ const Navbar = () => {
             />
           </Link>
           <div className="collapse navbar-collapse d-none d-lg-flex justify-content-center">
-            <ul className="navbar-nav gap-20 ">
-              <li className="nav-item">
+            <ul className="navbar-nav gap-20">
+              <li
+                className={`nav-item ${
+                  selected === "dashboard" ? "nav-active" : ""
+                }`}
+                onClick={() => setSelected("dashboard")}
+              >
                 <Link to="/home/dashboard" className="nav-link">
                   Dashboard
                 </Link>
               </li>
-              <li className="nav-item">
+              <li
+                className={`nav-item ${
+                  selected === "healthcare" ? "nav-active" : ""
+                }`}
+                onClick={() => setSelected("healthcare")}
+              >
                 <Link to="/home/healthcare" className="nav-link">
                   Healthcare
                 </Link>
               </li>
-              <li className="nav-item">
+              <li
+                className={`nav-item ${
+                  selected === "groupchat" ? "nav-active" : ""
+                }`}
+                onClick={() => setSelected("groupchat")}
+              >
                 <Link to="/home/groupchat" className="nav-link">
                   Groupchat
                 </Link>
               </li>
-              <li className="nav-item">
+              <li
+                className={`nav-item ${
+                  selected === "blogs" ? "nav-active" : ""
+                }`}
+                onClick={() => setSelected("blogs")}
+              >
                 <Link to="/home/blogs" className="nav-link">
                   Blogs
                 </Link>
               </li>
-              <li className="nav-item">
+              <li
+                className={`nav-item ${
+                  selected === "Intellivault" ? "nav-active" : ""
+                }`}
+                onClick={() => setSelected("Intellivault")}
+              >
                 <Link to="/home/Intellivault" className="nav-link">
                   IntelliVault
                 </Link>
               </li>
-              <li className="nav-item">
+              <li
+                className={`nav-item ${
+                  selected === "Members" ? "nav-active" : ""
+                }`}
+                onClick={() => setSelected("Members")}
+              >
                 <Link to="/home/Members" className="nav-link">
                   Family Settings
                 </Link>
@@ -105,7 +141,7 @@ const Navbar = () => {
           </div>
           <Offcanvas
             show={showOffcanvas}
-            onHide={() => setShowOffcanvas(false)}
+            onHide={handleCloseOffcanvas}
             placement="start"
           >
             <Offcanvas.Header closeButton>
@@ -127,7 +163,14 @@ const Navbar = () => {
                         style={{ fontSize: "1.5rem", color: "rgb(51, 49, 49)" }}
                       />
                     </div>
-                    <Link to="/home/dashboard" className="nav-link nav-item">
+                    <Link
+                      to="/home/dashboard"
+                      className="nav-link nav-item"
+                      onClick={() => {
+                        setSelected("dashboard");
+                        handleCloseOffcanvas();
+                      }}
+                    >
                       Dashboard
                     </Link>
                   </div>
@@ -139,7 +182,14 @@ const Navbar = () => {
                         style={{ fontSize: "1.5rem", color: "crimson" }}
                       />
                     </div>
-                    <Link to="/home/healthcare" className="nav-link nav-item">
+                    <Link
+                      to="/home/healthcare"
+                      className="nav-link nav-item"
+                      onClick={() => {
+                        setSelected("healthcare");
+                        handleCloseOffcanvas();
+                      }}
+                    >
                       Healthcare
                     </Link>
                   </div>
@@ -151,7 +201,14 @@ const Navbar = () => {
                         style={{ fontSize: "1.5rem", color: "#5ec4e6" }}
                       />
                     </div>
-                    <Link to="/home/groupchat" className="nav-link nav-item">
+                    <Link
+                      to="/home/groupchat"
+                      className="nav-link nav-item"
+                      onClick={() => {
+                        setSelected("groupchat");
+                        handleCloseOffcanvas();
+                      }}
+                    >
                       Groupchat
                     </Link>
                   </div>
@@ -163,7 +220,14 @@ const Navbar = () => {
                         style={{ fontSize: "1.5rem", color: "#556B2F" }}
                       />
                     </div>
-                    <Link to="/home/blogs" className="nav-link nav-item">
+                    <Link
+                      to="/home/blogs"
+                      className="nav-link nav-item"
+                      onClick={() => {
+                        setSelected("blogs");
+                        handleCloseOffcanvas();
+                      }}
+                    >
                       Blogs
                     </Link>
                   </div>
@@ -173,7 +237,14 @@ const Navbar = () => {
                     <div className="nav-icons d-flex justify-content-center">
                       <FaVault style={{ fontSize: "1.5rem", color: "Teal" }} />
                     </div>
-                    <Link to="/home/Intellivault" className="nav-link nav-item">
+                    <Link
+                      to="/home/Intellivault"
+                      className="nav-link nav-item"
+                      onClick={() => {
+                        setSelected("Intellivault");
+                        handleCloseOffcanvas();
+                      }}
+                    >
                       IntelliVault
                     </Link>
                   </div>
@@ -185,16 +256,20 @@ const Navbar = () => {
                         style={{ fontSize: "1.5rem", color: "orange" }}
                       />
                     </div>
-                    <Link to="/home/Members" className="nav-link nav-item">
+                    <Link
+                      to="/home/Members"
+                      className="nav-link nav-item"
+                      onClick={() => {
+                        setSelected("Members");
+                        handleCloseOffcanvas();
+                      }}
+                    >
                       Family Settings
                     </Link>
                   </div>
                 </li>
                 <li>
                   <div className="d-flex align-items-center nav-fields">
-                    {/* <div className="nav-icons d-flex justify-content-center">
-                      <RiUserSettingsFill style={{ fontSize: "1.5rem", color: "orange" }} />
-                    </div> */}
                     <div className="nav-icons d-flex justify-content-center">
                       <RiLogoutCircleLine
                         style={{ fontSize: "1.5rem", color: "black" }}
@@ -202,7 +277,10 @@ const Navbar = () => {
                     </div>
                     <button
                       className="nav-link nav-item btn btn-link"
-                      onClick={handleShowModal}
+                      onClick={() => {
+                        handleShowModal();
+                        handleCloseOffcanvas();
+                      }}
                       style={{ textTransform: "none" }}
                     >
                       Logout

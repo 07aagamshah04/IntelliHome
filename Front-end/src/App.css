@@ -385,6 +385,9 @@ body{margin-top:20px;}
 .active{
   border: 2px solid blue;
 }
+.nav-active{
+  font-weight: 700;
+}
 .date{
   background-color: blue;
   color: white;
@@ -437,8 +440,8 @@ body{margin-top:20px;}
 .nav-item:hover {
   color: black !important;
   font-weight: 500 !important;
-  transform: translateY(-4%);
-  transition: transform 0.3s ease-out;
+  /* transform: translateY(-4%); */
+  /* transition: transform 0.3s ease-out; */
 }
 
 

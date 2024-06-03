@@ -14,6 +14,8 @@ const MemberSection = () => {
   const [role, setrole] = useState("");
   const [logo, setlogo] = useState("");
   const [profileLogoColor, setprofileLogoColor] = useState("");
+  const [userRole, setUserRole] = useState("");
+
   const delMessage = [
     "If you delete your family group, all members will lose access to IntelliHome services that need a family group to work.",
     "If you leave your family group, you loose access to IntelliHome services. Are you sure?",
@@ -22,9 +24,18 @@ const MemberSection = () => {
   const [invitation, setInvitation] = useState(false);
   function handleInvitation(invite) {
     setInvitation(invite);
+    // console.log("Jaimin");
     console.log(invite);
   }
-  function handleGroupClick({ username, email, role, logo, profileLogoColor }) {
+  function handleGroupClick({
+    username,
+    email,
+    user,
+    role,
+    logo,
+    userRole,
+    profileLogoColor,
+  }) {
     if (role === "Member") {
       idx.current += 1;
     } else {
@@ -35,7 +46,17 @@ const MemberSection = () => {
     setrole(role);
     setlogo(logo);
     setprofileLogoColor(profileLogoColor);
-    setFlag(!flag);
+    // console.log(user);
+    // console.log(email);
+    if (user === email || userRole === "Family Manager") {
+      setFlag(false);
+    } else {
+      setFlag(true);
+    }
+  }
+
+  function role_dede_baba(userRole) {
+    setUserRole(userRole);
   }
 
   function toggle() {
@@ -45,6 +66,51 @@ const MemberSection = () => {
   function handleInviteToggle(toggle) {
     setInvitation(!toggle);
   }
+
+  const deleteMember = async (memberId, familyId) => {
+    try {
+      const response = await fetch(
+        `
+        http://localhost:8000/api/family-settings/deleteUser`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete member");
+      } else {
+        const data = await response.json();
+        alert("Member deleted successfully:");
+        // Handle success, e.g., update UI or notify user
+        try {
+          //When deployed API change it
+          const response = await fetch("http://localhost:8000/api/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          });
+          if (response.ok) {
+            window.location.href = "/";
+          } else {
+            alert("Error in logout");
+          }
+        } catch (error) {
+          alert("Error in logout");
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle error, e.g., show error message to user
+    }
+  };
+
   return (
     <>
       {invitation ? (
@@ -106,6 +172,9 @@ const MemberSection = () => {
               type="button"
               className="btn btn-outline-secondary"
               style={{ color: "blue", marginBottom: "10px", marginTop: "10px" }}
+              onClick={() => {
+                deleteMember();
+              }}
             >
               <RiDeleteBinLine style={{ fontSize: "20px" }} />
               &nbsp;{delbtnMessage[idx.current]}
@@ -136,9 +205,10 @@ const MemberSection = () => {
           <Members
             handleGroupClick={handleGroupClick}
             handleInvitation={handleInvitation}
+            role_de_baba={role_dede_baba}
           />
           <br />
-          <DeleteGroup />
+          <DeleteGroup userRole={userRole} />
         </div>
       )}
     </>
