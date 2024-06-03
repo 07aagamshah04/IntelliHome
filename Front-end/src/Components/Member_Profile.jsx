@@ -18,6 +18,8 @@ const MemberProfile = ({
   role,
   index,
   email,
+  user,
+  userRole,
   handleGroupClick,
 }) => {
   const [flag, setFlag] = useState(true);
@@ -27,8 +29,16 @@ const MemberProfile = ({
     const color = profileLogoColors[index]; // Access the color from the array
     setprofileLogoColor(color); // Set the profile logo color
     console.log(color);
-    handleGroupClick({ username, logo, role, email, profileLogoColor: color }); // Pass the color to the handleGroupClick function
-    setFlag(!flag); // Toggle flag
+    handleGroupClick({
+      username,
+      logo,
+      role,
+      email,
+      user,
+      userRole,
+      profileLogoColor: color,
+    }); // Pass the color to the handleGroupClick function
+    // setFlag(!flag); // Toggle flag
   };
 
   return (

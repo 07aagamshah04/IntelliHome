@@ -8,7 +8,7 @@ const {
   checkForAuthenticationCookie,
 } = require("./middlewares/authentication");
 
-//Exporting variable from .env
+// Exporting variable from .env
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
 
@@ -26,13 +26,17 @@ app.use(
     credentials: true, // If your requests require cookies or other credentials
   })
 );
+
+// Ensure cookie-parser is used before your authentication middleware
 app.use(cookieParser());
+
+// Use the authentication middleware
 app.use(checkForAuthenticationCookie("token"));
 
-//To connect with MongoDB file we would export connection module
+// To connect with MongoDB file we would export connection module
 const { ConnectMongoDB } = require("./connection");
 
-//Inbuilt routes
+// Inbuilt routes
 const Myusers = require("./routes/users");
 const Pages = require("./routes/page");
 const Family = require("./routes/familysettings");

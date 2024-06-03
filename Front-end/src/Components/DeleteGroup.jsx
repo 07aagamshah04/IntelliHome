@@ -1,6 +1,16 @@
 import { RiDeleteBinLine } from "react-icons/ri";
 import image from "../assets/5220.jpg";
-const DeleteGroup = () => {
+const DeleteGroup = ({ userRole }) => {
+  const handleDeleteClickForGroup = () => {
+    // event.preventDefault();
+    alert(userRole);
+    if (userRole === "Family Manager") {
+    } else {
+      alert("Only Manager can delete it!!");
+      return;
+    }
+  };
+
   return (
     <div
       className="container border"
@@ -34,6 +44,9 @@ const DeleteGroup = () => {
           type="button"
           className="btn btn-outline-secondary"
           style={{ color: "blue", marginBottom: "10px", marginTop: "10px" }}
+          onClick={() => {
+            handleDeleteClickForGroup();
+          }}
         >
           <RiDeleteBinLine style={{ fontSize: "20px" }} />
           &nbsp;Delete your group
