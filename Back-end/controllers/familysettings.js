@@ -17,6 +17,7 @@ async function sendRequest(req, res) {
   const { email } = req.body;
 
   const familyId = req.user.familyId;
+  console.log(familyId);
   const name = req.user.userName;
   const senderEmail = req.user.email;
 

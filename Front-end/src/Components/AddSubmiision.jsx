@@ -3,7 +3,7 @@
  * On deleting we have delete that file from AWS and also uppdate it's count
  * Save changes button should save file to respective section and also update files on server
  */
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BsChevronDown, BsChevronRight, BsDownload } from "react-icons/bs";
 import {
   Button,
@@ -37,68 +37,127 @@ const AddSubmiision = () => {
   // const[toggleState] = useState(1);
   const inputFile = useRef(null);
 
-  /* TIME PASS CODE
-  const handleFileDrop = (event) => {
-    event.preventDefault();
-    const droppedFiles = Array.from(event.dataTransfer.files);
-
-    // Filter out image and PDF files
-    const imageFiles = droppedFiles.filter(file => file.type.startsWith('image/'));
-    const pdfFiles = droppedFiles.filter(file => file.type === 'application/pdf');
-
-    setFiles(prevFiles => [...prevFiles, ...imageFiles, ...pdfFiles]);
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-  const handleItemClick = async (file) => {
-    try {
-        const response = await fetch(file.url);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = {
+          message: "just verifying it.",
+        };
+        const response = await fetch(
+          "http://localhost:8000/api/users/members-token-verify",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include",
+          }
+        );
         if (!response.ok) {
-            throw new Error('Failed to fetch file');
+          throw new Error("Error fetching Aadhar data");
         }
-        
-        const blob = await response.blob();
-        if (file.type.startsWith('image/') || file.type === 'application/pdf') {
-            const fileURL = URL.createObjectURL(blob);
-            window.open(fileURL, '_blank');
-        } else {
-            console.error('Unsupported file type:', file.type);
+        const aadharResponse = await fetch(
+          "http://localhost:8000/api/users/aadhar",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!aadharResponse.ok) {
+          throw new Error("Error fetching Aadhar data");
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-  };
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
 
-  const handleFileDrop = (event) => {
-    event.preventDefault();
-    const droppedFiles = Array.from(event.dataTransfer.files);
+        const aadharData = await aadharResponse.json();
 
-    // Filter out image and PDF files
-    const imageFiles = droppedFiles.filter(file => file.type.startsWith('image/'));
-    const pdfFiles = droppedFiles.filter(file => file.type === 'application/pdf');
+        setAadhar(aadharData);
 
-    setFiles(prevFiles => [...prevFiles, ...imageFiles, ...pdfFiles]);
-  };
-  for drag and drop
-    <div
-      onDrop={handleFileDrop}
-      onDragOver={handleDragOver}
-      style={{ width: '100%', height: '100vh', border: '2px dashed #aaa', textAlign: 'center' }}
-    >
-      <h1>Drag & Drop Image or PDF files here</h1>
-      <ul>
-        {files.map((file, index) => (
-          <li key={index} onClick={() => handleItemClick(file)} style={{ cursor: 'pointer' }}>{file.name}</li>
-        ))}
-      </ul>
-    </div>
-    */
+        const panResponse = await fetch("http://localhost:8000/api/users/pan", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!panResponse.ok) {
+          throw new Error("Error fetching Pan data");
+        }
+
+        const panData = await panResponse.json();
+
+        setPan(panData);
+
+        const voterIdResponse = await fetch(
+          "http://localhost:8000/api/users/voterid",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!voterIdResponse.ok) {
+          throw new Error("Error fetching Voter ID data");
+        }
+
+        const voteridData = await voterIdResponse.json();
+
+        setVoterId(voteridData);
+
+        const markSheetResponse = await fetch(
+          "http://localhost:8000/api/users/marksheet",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!markSheetResponse.ok) {
+          throw new Error("Error fetching Marksheet data");
+        }
+
+        const marksheetData = await markSheetResponse.json();
+
+        SetMarksheet(marksheetData);
+
+        const licenseResponse = await fetch(
+          "http://localhost:8000/api/users/license",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!licenseResponse.ok) {
+          throw new Error("Error fetching License data");
+        }
+
+        const licenseData = await licenseResponse.json();
+
+        setLicense(licenseData);
+      } catch (err) {
+        console.error("Error fetching document data:", err);
+        setError(err.message);
+        // setLoading(false);
+      }
+    };
+
+    fetchData();
+    console.log("done");
+  }, []);
 
   //Functions for POP-OP
   const handleFolderSubmit = (e) => {
@@ -138,29 +197,59 @@ const AddSubmiision = () => {
     inputFile.current.click();
   };
   const handleItemClick = (file) => {
-    // console.log(file);
+    // Convert the base64 string back to a Blob
+    const base64ToBlob = (base64, contentType) => {
+      const byteCharacters = atob(base64);
+      const byteArrays = [];
+
+      for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+        const slice = byteCharacters.slice(offset, offset + 512);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+
+      return new Blob(byteArrays, { type: contentType });
+    };
+
+    // Extract the base64 string from the file data
+    const base64String = file.file; // Directly use the file data
+
+    // Check if the base64String is valid
+    if (!base64String) {
+      console.error("Invalid Base64 string");
+      return;
+    }
+
+    // Determine the content type
+    const contentType = file.type;
+
+    // Convert the Base64 string to a Blob
+    let blob;
+    try {
+      blob = base64ToBlob(base64String, contentType);
+    } catch (error) {
+      console.error("Failed to convert Base64 string to Blob:", error);
+      return;
+    }
+
+    // Create an object URL for the Blob
+    const url = URL.createObjectURL(blob);
+
+    // Open the file in a new window
+    const newWindow = window.open();
     if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const imageURL = reader.result;
-        const newWindow = window.open();
-        newWindow.document.write(
-          `<img src="${imageURL}" alt="${file.name}" />`
-        );
-      };
-      reader.readAsDataURL(file);
+      newWindow.document.write(`<img src="${url}" alt="${file.filename}" />`);
     } else if (file.type === "application/pdf") {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const pdfURL = reader.result;
-        const newWindow = window.open();
-        newWindow.document.write(
-          `<embed src="${pdfURL}" type="application/pdf" width="100%" height="100%" />`
-        );
-      };
-      reader.readAsDataURL(file);
+      newWindow.document.write(
+        `<embed src="${url}" type="application/pdf" width="100%" height="100%" />`
+      );
     }
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFilees = Array.from(e.dataTransfer.files);
@@ -180,7 +269,24 @@ const AddSubmiision = () => {
 
     setDroppedFiles((prevFiles) => [...prevFiles, ...imageFiles, ...pdfFiles]);
   };
-  const handelSaveChanges = (e) => {
+
+  //it is used to store the data in Base64 format
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        // Extract base64 data from the result
+        const base64Data = fileReader.result.split(",")[1];
+        resolve(base64Data);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  const handelSaveChanges = async (e) => {
     e.preventDefault();
     if (
       folderName === "Folder Name" ||
@@ -193,64 +299,217 @@ const AddSubmiision = () => {
       if (folderName === "AADHAR CARD") {
         if (droppedFiles.length + aadhar.length > 5) {
           alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
+          return;
         } else {
-          // Filter out image and PDF files
-          const imageFiles = droppedFiles.filter((file) =>
-            file.type.startsWith("image/")
-          );
-          const pdfFiles = droppedFiles.filter(
-            (file) => file.type === "application/pdf"
-          );
-          // console.log(imageFiles);
-          setAadhar([...aadhar, ...imageFiles, ...pdfFiles]);
+          try {
+            const fileDataArray = await Promise.all(
+              droppedFiles.map(async (file) => {
+                const base64Data = await convertToBase64(file);
+                return {
+                  file: base64Data,
+                  filename: file.name,
+                  type: file.type,
+                  size: file.size,
+                };
+              })
+            );
+
+            const requestData = {
+              folderName: "AADHAR CARD",
+              files: fileDataArray,
+            };
+
+            const response = await fetch(
+              "http://localhost:8000/api/users/intellivault",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+                credentials: "include",
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const responseData = await response.json();
+            alert(responseData.message);
+          } catch (error) {
+            console.error("Error storing files in the database:", error);
+          }
         }
       } else if (folderName === "PAN CARD") {
-        if (droppedFiles.length + aadhar.length > 5) {
+        if (droppedFiles.length + pan.length > 5) {
           alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
+          return;
         } else {
-          const imageFiles = droppedFiles.filter((file) =>
-            file.type.startsWith("image/")
-          );
-          const pdfFiles = droppedFiles.filter(
-            (file) => file.type === "application/pdf"
-          );
-          setPan([...pan, ...imageFiles, ...pdfFiles]);
+          try {
+            const fileDataArray = await Promise.all(
+              droppedFiles.map(async (file) => {
+                const base64Data = await convertToBase64(file);
+                return {
+                  file: base64Data,
+                  filename: file.name,
+                  type: file.type,
+                  size: file.size,
+                };
+              })
+            );
+
+            const requestData = {
+              folderName: "PAN CARD",
+              files: fileDataArray,
+            };
+
+            const response = await fetch(
+              "http://localhost:8000/api/users/intellivault",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+                credentials: "include",
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const responseData = await response.json();
+            alert(responseData.message);
+          } catch (error) {
+            console.error("Error storing files in the database:", error);
+          }
         }
       } else if (folderName === "LICENSE") {
         if (droppedFiles.length + license.length > 5) {
           alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
+          return;
         } else {
-          const imageFiles = droppedFiles.filter((file) =>
-            file.type.startsWith("image/")
-          );
-          const pdfFiles = droppedFiles.filter(
-            (file) => file.type === "application/pdf"
-          );
-          setLicense([...license, ...imageFiles, ...pdfFiles]);
+          try {
+            const fileDataArray = await Promise.all(
+              droppedFiles.map(async (file) => {
+                const base64Data = await convertToBase64(file);
+                return {
+                  file: base64Data,
+                  filename: file.name,
+                  type: file.type,
+                  size: file.size,
+                };
+              })
+            );
+
+            const requestData = {
+              folderName: "LICENSE",
+              files: fileDataArray,
+            };
+
+            const response = await fetch(
+              "http://localhost:8000/api/users/intellivault",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+                credentials: "include",
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const responseData = await response.json();
+            alert(responseData.message);
+          } catch (error) {
+            console.error("Error storing files in the database:", error);
+          }
         }
       } else if (folderName === "VOTER ID") {
         if (droppedFiles.length + voterid.length > 5) {
           alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
+          return;
         } else {
-          const imageFiles = droppedFiles.filter((file) =>
-            file.type.startsWith("image/")
-          );
-          const pdfFiles = droppedFiles.filter(
-            (file) => file.type === "application/pdf"
-          );
-          setVoterId([...voterid, ...imageFiles, ...pdfFiles]);
+          try {
+            const fileDataArray = await Promise.all(
+              droppedFiles.map(async (file) => {
+                const base64Data = await convertToBase64(file);
+                return {
+                  file: base64Data,
+                  filename: file.name,
+                  type: file.type,
+                  size: file.size,
+                };
+              })
+            );
+
+            const requestData = {
+              folderName: "VOTER ID",
+              files: fileDataArray,
+            };
+
+            const response = await fetch(
+              "http://localhost:8000/api/users/intellivault",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+                credentials: "include",
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const responseData = await response.json();
+            alert(responseData.message);
+          } catch (error) {
+            console.error("Error storing files in the database:", error);
+          }
         }
       } else {
         if (droppedFiles.length + marksheet.length > 5) {
           alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
+          return;
         } else {
-          const imageFiles = droppedFiles.filter((file) =>
-            file.type.startsWith("image/")
-          );
-          const pdfFiles = droppedFiles.filter(
-            (file) => file.type === "application/pdf"
-          );
-          SetMarksheet([...marksheet, ...imageFiles, ...pdfFiles]);
+          try {
+            const fileDataArray = await Promise.all(
+              droppedFiles.map(async (file) => {
+                const base64Data = await convertToBase64(file);
+                return {
+                  file: base64Data,
+                  filename: file.name,
+                  type: file.type,
+                  size: file.size,
+                };
+              })
+            );
+
+            const requestData = {
+              folderName: "MARKSHEET",
+              files: fileDataArray,
+            };
+
+            const response = await fetch(
+              "http://localhost:8000/api/users/intellivault",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+                credentials: "include",
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const responseData = await response.json();
+            alert(responseData.message);
+          } catch (error) {
+            console.error("Error storing files in the database:", error);
+          }
         }
       }
       setDroppedFiles([]);
@@ -260,20 +519,127 @@ const AddSubmiision = () => {
   };
 
   //Functions for delete any file from tab section
-  const handleDeleteAadhar = (index) => {
-    setAadhar(aadhar.filter((_, i) => i !== index));
+  const handleDeleteAadhar = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/users/aadhar/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        alert("Data deleted successfully");
+        // setPosts(posts.filter((post) => post._id !== id));
+        setAadhar(aadhar.filter((item) => item._id !== id));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
   };
-  const handleDeletePan = (index) => {
-    setPan(pan.filter((_, i) => i !== index));
+  const handleDeletePan = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/users/pan/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        alert("Data deleted successfully");
+        // setPosts(posts.filter((post) => post._id !== id));
+        setPan(aadhar.filter((item) => item._id !== id));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
   };
-  const handleDeleteVoterId = (index) => {
-    setVoterId(voterid.filter((_, i) => i !== index));
+  const handleDeleteVoterId = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/users/voterid/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        alert("Data deleted successfully");
+        // setPosts(posts.filter((post) => post._id !== id));
+        setVoterId(aadhar.filter((item) => item._id !== id));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
   };
-  const handleDeleteLicense = (index) => {
-    setLicense(license.filter((_, i) => i !== index));
+  const handleDeleteLicense = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/users/license/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        alert("Data deleted successfully");
+        // setPosts(posts.filter((post) => post._id !== id));
+        setLicense(aadhar.filter((item) => item._id !== id));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
   };
-  const handleDeleteMarksheet = (index) => {
-    SetMarksheet(marksheet.filter((_, i) => i !== index));
+  const handleDeleteMarksheet = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/users/marksheet/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        alert("Data deleted successfully");
+        // setPosts(posts.filter((post) => post._id !== id));
+        SetMarksheet(aadhar.filter((item) => item._id !== id));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  const base64ToBlob = (base64, contentType) => {
+    const byteCharacters = atob(base64);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    return new Blob(byteArrays, { type: contentType });
   };
 
   return (
@@ -294,35 +660,40 @@ const AddSubmiision = () => {
                 title="AADHAR CARD"
                 style={{ border: "2px solid whitesmoke" }}
               >
-                {aadhar.map((file, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "10px",
-                      color: "grey",
-                    }}
-                  >
-                    <CiFolderOn style={{ cursor: "pointer" }} />
-                    <span
-                      style={{ flex: 1, cursor: "pointer" }}
-                      onClick={() => handleItemClick(file)}
+                {aadhar.map((file, index) => {
+                  const blob = base64ToBlob(file.file, file.type);
+                  const url = URL.createObjectURL(blob);
+
+                  return (
+                    <div
+                      key={file._id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                        color: "grey",
+                      }}
                     >
-                      {file.name}
-                    </span>
-                    <span
-                      style={{ marginRight: "10px" }}
-                    >{`${file.size}B`}</span>
-                    <BsTrash
-                      onClick={() => handleDeleteAadhar(index)}
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                    />
-                    <a href={URL.createObjectURL(file)} download>
-                      <BsDownload style={{ cursor: "pointer" }} />
-                    </a>
-                  </div>
-                ))}
+                      <CiFolderOn style={{ cursor: "pointer" }} />
+                      <span
+                        style={{ flex: 1, cursor: "pointer" }}
+                        onClick={() => handleItemClick(file)}
+                      >
+                        {file.filename}
+                      </span>
+                      <span
+                        style={{ marginRight: "10px" }}
+                      >{`${file.size}B`}</span>
+                      <BsTrash
+                        onClick={() => handleDeleteAadhar(file._id)}
+                        style={{ cursor: "pointer", marginRight: "10px" }}
+                      />
+                      <a href={url} download={file.filename}>
+                        <BsDownload style={{ cursor: "pointer" }} />
+                      </a>
+                    </div>
+                  );
+                })}
                 {aadhar.length === 0 && (
                   <p
                     style={{
@@ -339,32 +710,40 @@ const AddSubmiision = () => {
                 title="PAN CARD"
                 style={{ border: "2px solid whitesmoke" }}
               >
-                {pan.map((file, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "10px",
-                      color: "grey",
-                    }}
-                  >
-                    <CiFolderOn style={{ cursor: "pointer" }} />
-                    <span
-                      style={{ flex: 1, cursor: "pointer" }}
-                      onClick={() => handleItemClick(file)}
+                {pan.map((file, index) => {
+                  const blob = base64ToBlob(file.file, file.type);
+                  const url = URL.createObjectURL(blob);
+
+                  return (
+                    <div
+                      key={file._id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                        color: "grey",
+                      }}
                     >
-                      {file.name}
-                    </span>
-                    <span
-                      style={{ marginRight: "10px" }}
-                    >{`${file.size}B`}</span>
-                    <BsTrash
-                      onClick={() => handleDeletePan(index)}
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                    />
-                  </div>
-                ))}
+                      <CiFolderOn style={{ cursor: "pointer" }} />
+                      <span
+                        style={{ flex: 1, cursor: "pointer" }}
+                        onClick={() => handleItemClick(file)}
+                      >
+                        {file.filename}
+                      </span>
+                      <span
+                        style={{ marginRight: "10px" }}
+                      >{`${file.size}B`}</span>
+                      <BsTrash
+                        onClick={() => handleDeletePan(file._id)}
+                        style={{ cursor: "pointer", marginRight: "10px" }}
+                      />
+                      <a href={url} download={file.filename}>
+                        <BsDownload style={{ cursor: "pointer" }} />
+                      </a>
+                    </div>
+                  );
+                })}
                 {pan.length === 0 && (
                   <p style={{ fontSize: "1.5em", color: "grey" }}>
                     No Content...
@@ -376,32 +755,40 @@ const AddSubmiision = () => {
                 title="LICENSE"
                 style={{ border: "2px solid whitesmoke" }}
               >
-                {license.map((file, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "10px",
-                      color: "grey",
-                    }}
-                  >
-                    <CiFolderOn style={{ cursor: "pointer" }} />
-                    <span
-                      style={{ flex: 1, cursor: "pointer" }}
-                      onClick={() => handleItemClick(file)}
+                {license.map((file, index) => {
+                  const blob = base64ToBlob(file.file, file.type);
+                  const url = URL.createObjectURL(blob);
+
+                  return (
+                    <div
+                      key={file._id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                        color: "grey",
+                      }}
                     >
-                      {file.name}
-                    </span>
-                    <span
-                      style={{ marginRight: "10px" }}
-                    >{`${file.size}B`}</span>
-                    <BsTrash
-                      onClick={() => handleDeleteLicense(index)}
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                    />
-                  </div>
-                ))}
+                      <CiFolderOn style={{ cursor: "pointer" }} />
+                      <span
+                        style={{ flex: 1, cursor: "pointer" }}
+                        onClick={() => handleItemClick(file)}
+                      >
+                        {file.filename}
+                      </span>
+                      <span
+                        style={{ marginRight: "10px" }}
+                      >{`${file.size}B`}</span>
+                      <BsTrash
+                        onClick={() => handleDeleteLicense(file._id)}
+                        style={{ cursor: "pointer", marginRight: "10px" }}
+                      />
+                      <a href={url} download={file.filename}>
+                        <BsDownload style={{ cursor: "pointer" }} />
+                      </a>
+                    </div>
+                  );
+                })}
                 {license.length === 0 && (
                   <p style={{ fontSize: "1.5em", color: "grey" }}>
                     No Content...
@@ -413,32 +800,40 @@ const AddSubmiision = () => {
                 title="VOTER ID"
                 style={{ border: "2px solid whitesmoke" }}
               >
-                {voterid.map((file, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "10px",
-                      color: "grey",
-                    }}
-                  >
-                    <CiFolderOn style={{ cursor: "pointer" }} />
-                    <span
-                      style={{ flex: 1, cursor: "pointer" }}
-                      onClick={() => handleItemClick(file)}
+                {voterid.map((file, index) => {
+                  const blob = base64ToBlob(file.file, file.type);
+                  const url = URL.createObjectURL(blob);
+
+                  return (
+                    <div
+                      key={file._id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                        color: "grey",
+                      }}
                     >
-                      {file.name}
-                    </span>
-                    <span
-                      style={{ marginRight: "10px" }}
-                    >{`${file.size}B`}</span>
-                    <BsTrash
-                      onClick={() => handleDeleteVoterId(index)}
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                    />
-                  </div>
-                ))}
+                      <CiFolderOn style={{ cursor: "pointer" }} />
+                      <span
+                        style={{ flex: 1, cursor: "pointer" }}
+                        onClick={() => handleItemClick(file)}
+                      >
+                        {file.filename}
+                      </span>
+                      <span
+                        style={{ marginRight: "10px" }}
+                      >{`${file.size}B`}</span>
+                      <BsTrash
+                        onClick={() => handleDeleteVoterId(file._id)}
+                        style={{ cursor: "pointer", marginRight: "10px" }}
+                      />
+                      <a href={url} download={file.filename}>
+                        <BsDownload style={{ cursor: "pointer" }} />
+                      </a>
+                    </div>
+                  );
+                })}
                 {voterid.length === 0 && (
                   <p style={{ fontSize: "1.5em", color: "grey" }}>
                     No Content...
@@ -450,32 +845,40 @@ const AddSubmiision = () => {
                 title="MARKSHEET"
                 style={{ border: "2px solid whitesmoke" }}
               >
-                {marksheet.map((file, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "10px",
-                      color: "grey",
-                    }}
-                  >
-                    <CiFolderOn style={{ cursor: "pointer" }} />
-                    <span
-                      style={{ flex: 1, cursor: "pointer" }}
-                      onClick={() => handleItemClick(file)}
+                {marksheet.map((file, index) => {
+                  const blob = base64ToBlob(file.file, file.type);
+                  const url = URL.createObjectURL(blob);
+
+                  return (
+                    <div
+                      key={file._id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                        color: "grey",
+                      }}
                     >
-                      {file.name}
-                    </span>
-                    <span
-                      style={{ marginRight: "10px" }}
-                    >{`${file.size}B`}</span>
-                    <BsTrash
-                      onClick={() => handleDeleteMarksheet(index)}
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                    />
-                  </div>
-                ))}
+                      <CiFolderOn style={{ cursor: "pointer" }} />
+                      <span
+                        style={{ flex: 1, cursor: "pointer" }}
+                        onClick={() => handleItemClick(file)}
+                      >
+                        {file.filename}
+                      </span>
+                      <span
+                        style={{ marginRight: "10px" }}
+                      >{`${file.size}B`}</span>
+                      <BsTrash
+                        onClick={() => handleDeleteMarksheet(file._id)}
+                        style={{ cursor: "pointer", marginRight: "10px" }}
+                      />
+                      <a href={url} download={file.filename}>
+                        <BsDownload style={{ cursor: "pointer" }} />
+                      </a>
+                    </div>
+                  );
+                })}
                 {marksheet.length === 0 && (
                   <p style={{ fontSize: "1.5em", color: "grey" }}>
                     No Content...

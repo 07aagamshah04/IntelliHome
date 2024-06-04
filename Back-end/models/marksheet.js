@@ -11,6 +11,10 @@ const marksheetSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+    },
     size: {
       type: String,
       required: true,
@@ -23,6 +27,6 @@ const marksheetSchema = new mongoose.Schema(
   { timestamps: true }
 );
 //Now making model of this schema
-const Marksheet = mongoose.model("marksheet", fileSchema);
+const Marksheet = mongoose.model("marksheet", marksheetSchema);
 
 module.exports = Marksheet;
