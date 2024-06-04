@@ -1,6 +1,11 @@
 const User = require("../models/users");
+const Aadhar = require("../models/aadhar");
+const License = require("../models/license");
+const Marksheet = require("../models/marksheet");
+const Pan = require("../models/pan");
+const VoterId = require("../models/voterid");
 const nodeMailer = require("nodemailer");
-// const Files = require("../models/files");
+
 const EMAIL = process.env.EMAIL;
 const PASSWORD = process.env.PASSWORD;
 
@@ -236,30 +241,212 @@ async function verifyEmail(req, res) {
   }
 }
 
-// async function putPost(req, res) {
-//   const body = req.body;
+async function addFiles(req, res) {
+  const folderName = req.body.folderName;
+  const files = req.body.files;
+  if (folderName === "AADHAR CARD") {
+    try {
+      for (const item of files) {
+        await Aadhar.create({
+          file: item.file,
+          filename: item.filename,
+          type: item.type,
+          size: item.size,
+          createdBy: req.user.familyId,
+        });
+      }
+      return res.status(200).json({ message: "Data Added" });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ msg: "Error" });
+    }
+  } else if (folderName === "PAN CARD") {
+    try {
+      for (const item of files) {
+        await Pan.create({
+          file: item.file,
+          filename: item.filename,
+          type: item.type,
+          size: item.size,
+          createdBy: req.user.familyId,
+        });
+      }
+      return res.status(200).json({ message: "Data Added" });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ msg: "Error" });
+    }
+  } else if (folderName === "LICENSE") {
+    try {
+      for (const item of files) {
+        await License.create({
+          file: item.file,
+          filename: item.filename,
+          type: item.type,
+          size: item.size,
+          createdBy: req.user.familyId,
+        });
+      }
+      return res.status(200).json({ message: "Data Added" });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ msg: "Error" });
+    }
+  } else if (folderName === "VOTER ID") {
+    try {
+      for (const item of files) {
+        await VoterId.create({
+          file: item.file,
+          filename: item.filename,
+          type: item.type,
+          size: item.size,
+          createdBy: req.user.familyId,
+        });
+      }
+      return res.status(200).json({ message: "Data Added" });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ msg: "Error" });
+    }
+  } else {
+    try {
+      for (const item of files) {
+        await Marksheet.create({
+          file: item.file,
+          filename: item.filename,
+          type: item.type,
+          size: item.size,
+          createdBy: req.user.familyId,
+        });
+      }
+      return res.status(200).json({ message: "Data Added" });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ msg: "Error" });
+    }
+  }
+}
 
-//   if (!body || !body.file || !body.title || !body.text) {
-//     return res.status(400).json({ msg: "All fields are requireedee" });
-//   }
-//   // console.log(body);
-//   const result = await Files.create({
-//     file: body.file,
-//     title: body.title,
-//     text: body.text,
-//   });
-//   return res.status(200).json({ msg: "Post added succesfully" });
-// }
+async function getAadhar(req, res) {
+  try {
+    // console.log(req.user);
+    const familyId = req.user.familyId; // Assuming req.user.familyId is available
 
-// async function getPost(req, res) {
-//   try {
-//     const posts = await Files.findById("665192a5032c310fb74878e8");
-//     console.log(posts);
-//     res.status(200).json(posts);
-//   } catch (error) {
-//     res.status(500).json({ msg: "Failed to fetch posts", error });
-//   }
-// }
+    const files = await Aadhar.find({ createdBy: familyId });
+
+    return res.status(200).json(files);
+  } catch (error) {
+    console.error("Error fetching Aadhar data:", error);
+    return res.status(500).json({ msg: "Error fetching data" });
+  }
+}
+
+async function getPan(req, res) {
+  try {
+    const familyId = req.user.familyId; // Assuming req.user.familyId is available
+
+    const files = await Pan.find({ createdBy: familyId });
+
+    return res.status(200).json(files);
+  } catch (error) {
+    console.error("Error fetching Aadhar data:", error);
+    return res.status(500).json({ msg: "Error fetching data" });
+  }
+}
+
+async function getVoterId(req, res) {
+  try {
+    const familyId = req.user.familyId; // Assuming req.user.familyId is available
+
+    const files = await VoterId.find({ createdBy: familyId });
+
+    return res.status(200).json(files);
+  } catch (error) {
+    console.error("Error fetching Aadhar data:", error);
+    return res.status(500).json({ msg: "Error fetching data" });
+  }
+}
+
+async function verifyMemeber(req, res) {
+  // console.log(req.user.familyId);
+  return res.status(200).json({ mwssage: "Done" });
+}
+
+async function getMarkSheet(req, res) {
+  try {
+    const familyId = req.user.familyId; // Assuming req.user.familyId is available
+
+    const files = await Marksheet.find({ createdBy: familyId });
+
+    return res.status(200).json(files);
+  } catch (error) {
+    console.error("Error fetching Aadhar data:", error);
+    return res.status(500).json({ msg: "Error fetching data" });
+  }
+}
+
+async function getLicense(req, res) {
+  try {
+    const familyId = req.user.familyId; // Assuming req.user.familyId is available
+
+    const files = await License.find({ createdBy: familyId });
+
+    return res.status(200).json(files);
+  } catch (error) {
+    console.error("Error fetching Aadhar data:", error);
+    return res.status(500).json({ msg: "Error fetching data" });
+  }
+}
+
+async function deleteAadhar(req, res) {
+  try {
+    const { id } = req.params;
+    await Aadhar.findByIdAndDelete(id);
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function deletePan(req, res) {
+  try {
+    const { id } = req.params;
+    await Pan.findByIdAndDelete(id);
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function deleteMarksheet(req, res) {
+  try {
+    const { id } = req.params;
+    await Marksheet.findByIdAndDelete(id);
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function deleteVoterId(req, res) {
+  try {
+    const { id } = req.params;
+    await VoterId.findByIdAndDelete(id);
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function deleteLicense(req, res) {
+  try {
+    const { id } = req.params;
+    await License.findByIdAndDelete(id);
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
 
 module.exports = {
   GetAllUsers,
@@ -268,6 +455,18 @@ module.exports = {
   DeleteuserByid,
   sendEmail,
   verifyEmail,
+  addFiles,
+  getAadhar,
+  getPan,
+  getVoterId,
+  getMarkSheet,
+  getLicense,
+  verifyMemeber,
+  deleteAadhar,
+  deleteLicense,
+  deleteMarksheet,
+  deleteVoterId,
+  deletePan,
   // putPost,
   // getPost,
 };
