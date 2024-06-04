@@ -40,6 +40,8 @@ const { ConnectMongoDB } = require("./connection");
 const Myusers = require("./routes/users");
 const Pages = require("./routes/page");
 const Family = require("./routes/familysettings");
+const Events = require("./routes/dashboard");
+const Blogs = require("./routes/blogs");
 
 // Connection with mongoose
 ConnectMongoDB(MONGO_URL)
@@ -54,6 +56,8 @@ ConnectMongoDB(MONGO_URL)
 app.use("/api", Pages);
 app.use("/api/users", Myusers);
 app.use("/api/family-settings", Family);
+app.use("/api/dashboard", Events);
+app.use("/api/blogs", Blogs);
 
 app.listen(PORT, () => {
   console.log(`SERVER STARTED AT ${PORT}`);

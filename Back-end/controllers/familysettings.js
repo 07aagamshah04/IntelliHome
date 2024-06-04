@@ -230,7 +230,7 @@ async function sendRequest(req, res) {
 }
 
 async function haveData(req, res) {
-  // console.log(req.user);
+  console.log(req.user);
   const { familyId } = req.user;
   const family = await Family.findById(familyId).exec();
   const memberIds = family.members;

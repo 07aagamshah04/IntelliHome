@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -17,21 +17,48 @@ const Posts = () => {
     setSelectedFiles(files);
   };
 
-  // useEffect(() => {
-  //   // Fetch posts when the component mounts
-  //   const fetchPosts = async () => {
-  //     try {
-  //       const response = await fetch("http://localhost:8000/api/users/posts");
-  //       const data = await response.json();
-  //       console.log(data);
-  //       setPosts([...posts, data]);
-  //     } catch (error) {
-  //       console.error("Error fetching posts:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const authResponse = await fetch(
+          "http://localhost:8000/api/blogs/members-token-verify",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: "just authenticating and getting token" }),
+            credentials: "include",
+          }
+        );
 
-  //   fetchPosts();
-  // }, []);
+        if (authResponse.ok) {
+          const postsResponse = await fetch("http://localhost:8000/api/blogs/posts", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          });
+          const data = await postsResponse.json();
+          console.log(data);
+          if (Array.isArray(data)) {
+            setPosts(data);
+          } else {
+            console.error("Fetched data is not an array:", data);
+          }
+        } else {
+          const errorData = await authResponse.json();
+          alert(errorData.msg);
+        }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+        alert("Error fetching the data");
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -61,22 +88,53 @@ const Posts = () => {
         text: postText,
       };
 
-      const response = await fetch("http://localhost:8000/api/users/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(post),
-      });
+      const authResponse = await fetch(
+        "http://localhost:8000/api/blogs/members-token-verify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: "just authenticating and getting token" }),
+          credentials: "include",
+        }
+      );
 
-      if (response.ok) {
-        alert("Your Post has been posted");
+      if (authResponse.ok) {
+        const postResponse = await fetch("http://localhost:8000/api/blogs/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(post),
+        });
+
+        if (postResponse.ok) {
+          alert("Your Post has been posted");
+          const updatedResponse = await fetch("http://localhost:8000/api/blogs/posts", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          });
+          const data = await updatedResponse.json();
+          if (Array.isArray(data)) {
+            setPosts(data);
+          } else {
+            console.error("Fetched data is not an array:", data);
+          }
+        } else {
+          const errorData = await postResponse.json();
+          alert(errorData.msg);
+        }
       } else {
-        const errorData = await response.json();
+        const errorData = await authResponse.json();
         alert(errorData.msg);
       }
     } catch (error) {
-      console.error("Error adding user:", error);
+      console.error("Error adding post:", error);
     }
 
     setPostTitle("");
@@ -85,17 +143,29 @@ const Posts = () => {
     setShowModal(false);
   };
 
-  const handleDelete = (index) => {
-    setPosts(posts.filter((_, i) => i !== index));
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/blogs/posts/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        alert("Post deleted successfully");
+        setPosts(posts.filter((post) => post._id !== id));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.msg);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
   };
 
   return (
     <div className={styles.postiii}>
       <div className="container text-center">
         <blockquote className="blockquote">
-          <p className="mb-0 blog-h1">
-            "Family is not an important thing. It's everything."
-          </p>
+          <p className="mb-0 blog-h1">{"Family is not an important thing. It's everything."}</p>
         </blockquote>
         <Button onClick={() => setShowModal(true)}>Save Your Memories</Button>
       </div>
@@ -122,7 +192,6 @@ const Posts = () => {
             type="file"
             className="form-control mb-3"
             onChange={handleFileInputChange}
-            multiple
             accept=".jpeg, .png, .jpg"
           />
           {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
@@ -138,9 +207,9 @@ const Posts = () => {
       </Modal>
 
       <section className={styles.articles}>
-        {posts &&
-          posts.map((post, index) => (
-            <article key={index} className={styles["article-wrapper"]}>
+        {Array.isArray(posts) && posts.length > 0 ? (
+          posts.map((post) => (
+            <article key={post._id} className={styles["article-wrapper"]}>
               <figure>
                 <img src={post.file} alt={post.title} />
               </figure>
@@ -156,13 +225,16 @@ const Posts = () => {
                   <MdDelete
                     size={25}
                     className={styles["delete-icon"]}
-                    onClick={() => handleDelete(index)}
+                    onClick={() => handleDelete(post._id)}
                   />
                 </div>
                 <p>{post.text}</p>
               </div>
             </article>
-          ))}
+          ))
+        ) : (
+          <p>No posts available.</p>
+        )}
       </section>
     </div>
   );

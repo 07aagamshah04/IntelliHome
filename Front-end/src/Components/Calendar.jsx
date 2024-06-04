@@ -75,6 +75,7 @@ function Calendar() {
   const [eventTitle, setEventTitle] = useState("");
   const [eventDay, setEventDay] = useState("");
   const [eventTime, setEventTime] = useState("");
+  const [newEventAdded, setNewEventAdded] = useState(false);
   // const handleClose = () => {
   //   //   // if (e.target === e.currentTarget) {
   //   setShow(false); // Close the modal
@@ -93,52 +94,158 @@ function Calendar() {
     e.preventDefault();
     // Process your form submission here
     setShow(false);
-    addEvent(eventDay, eventTitle);
+    // addEvent(eventDay, eventTitle);
     console.log("Event Title:", eventTitle);
     console.log("Event Day:", eventDay);
     console.log("Event Time:", eventTime);
+    const formdata = {
+      title: eventTitle,
+      date: eventDay,
+      time: eventTime,
+    };
+    const fetchData = async () => {
+      try {
+        const data = {
+          name: "just authenticating and getting token",
+        };
+        const response = await fetch(
+          "http://localhost:8000/api/dashboard/members-token-verify",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include",
+          }
+        );
+        if (response.ok) {
+          try {
+            const response = await fetch(
+              "http://localhost:8000/api/dashboard/add-event",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(formdata),
+              }
+            );
+            if (response.ok) {
+              const data = await response.json();
+              console.log("Event Added sucessfully...");
+              console.log(data);
+              setNewEventAdded(!newEventAdded);
+            }
+          } catch (error) {
+            alert("Error feching data");
+          }
+        } else {
+          const errorData = await response.json();
+          alert(errorData.msg);
+        }
+      } catch (error) {
+        console.log("error");
+        alert("Error fetching the data");
+      }
+    };
+
+    fetchData();
   };
 
   // resetFields(); // Reset input fields after form submission
   // const resetFields = () => {
   // };
 
-  const [eventData, setEventData] = useState({
-    "2024-04-17": [
-      "Meeting with Client",
-      "Parents Teacher Meeting",
-      "Going to play cricket",
-      "Going to play cricket",
-    ],
-  });
+  const [eventData, setEventData] = useState({});
   // Function to add an event for a specific date
-  const addEvent = (date, event) => {
-    // Create a new object by copying the existing one
-    const newEventData = { ...eventData };
-    // If the date already exists in the data, add the event to its array
-    if (newEventData[date]) {
-      newEventData[date].push(event);
-    } else {
-      // If the date doesn't exist, create a new array with the event
-      newEventData[date] = [event];
-    }
-    // Update the state with the new data
-    setEventData(newEventData);
-  };
+  // const addEvent = (date, event) => {
+  //   // Create a new object by copying the existing one
+  //   const newEventData = { ...eventData };
+  //   // If the date already exists in the data, add the event to its array
+  //   if (newEventData[date]) {
+  //     newEventData[date].push(event);
+  //   } else {
+  //     // If the date doesn't exist, create a new array with the event
+  //     newEventData[date] = [event];
+  //   }
+  //   // Update the state with the new data
+  //   // setEventData(newEventData);
+  // };
   useEffect(() => {
-    // console.log(eventData);
-  }, [eventData]);
+    const fetchData = async () => {
+      try {
+        const data = {
+          name: "just authenticating and getting token",
+        };
+        const response = await fetch(
+          "http://localhost:8000/api/dashboard/members-token-verify",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include",
+          }
+        );
+        if (response.ok) {
+          try {
+            const response = await fetch(
+              "http://localhost:8000/api/dashboard/get-events",
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const data = await response.json();
+              console.log("Fetched sucessfully...");
+              console.log(data);
+              // const data = await response.json();
+              const transformedData = data.reduce((acc, event) => {
+                if (!acc[event.eventDate]) {
+                  acc[event.eventDate] = [];
+                }
+                acc[event.eventDate].push({
+                  id: event._id,
+                  title: event.eventName,
+                });
+                return acc;
+              }, {});
+
+              setEventData(transformedData);
+            }
+          } catch (error) {
+            alert("Error feching data");
+          }
+        } else {
+          const errorData = await response.json();
+          alert(errorData.msg);
+        }
+      } catch (error) {
+        console.log("error");
+        alert("Error fetching the data");
+      }
+    };
+
+    fetchData();
+  }, [newEventAdded]);
   // Function to remove an event for a specific date
-  const removeEvent = (date, eventIndex) => {
-    // Create a new object by copying the existing one
-    const newEventData = { ...eventData };
-    // If the date exists in the data, remove the event from its array
-    if (newEventData[date]) {
-      newEventData[date].splice(eventIndex, 1);
-      // Update the state with the new data
-      setEventData(newEventData);
-    }
-  };
+  // const removeEvent = (date, eventIndex) => {
+  //   // Create a new object by copying the existing one
+  //   const newEventData = { ...eventData };
+  //   // If the date exists in the data, remove the event from its array
+  //   if (newEventData[date]) {
+  //     newEventData[date].splice(eventIndex, 1);
+  //     // Update the state with the new data
+  //     setEventData(newEventData);
+  //   }
+  // };
   const [selectedDate, setSelectedDate] = useState("");
   const handleBoxClick = (day, month, year) => {
     if (parseInt(month) < 10) {
@@ -159,13 +266,31 @@ function Calendar() {
   };
 
   const filteredEvents = eventData[selectedDate] || [];
-  const handleRemoveEvent = (date, index) => {
-    const updatedEvents = [...filteredEvents];
-    updatedEvents.splice(index, 1); // Remove the event at the specified index
-    const updatedEventData = { ...eventData };
-    updatedEventData[date] = updatedEvents;
-    setEventData(updatedEventData);
+  const handleRemoveEvent = async (eventDate, eventId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/dashboard/remove-event/${eventId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        // Update state to reflect the removal
+        setEventData((prevEvents) => {
+          const updatedEvents = { ...prevEvents };
+          updatedEvents[eventDate] = updatedEvents[eventDate].filter((event) => event.id !== eventId);
+          return updatedEvents;
+        });
+      } else {
+        console.error("Failed to remove event");
+      }
+    } catch (error) {
+      console.error("Error removing event:", error);
+    }
   };
+
 
   return (
     <>
@@ -266,7 +391,7 @@ function Calendar() {
                           ) {
                             return eventData[date].map((event, index) => (
                               <div
-                                key={`${date}-${index}`}
+                                key={event.id}
                                 className="event"
                                 style={{
                                   textAlign: "left",
@@ -274,9 +399,9 @@ function Calendar() {
                                   borderRadius: "10px",
                                   color: "blue",
                                 }}
-                                onDoubleClick={() => removeEvent(date, index)}
+                                onDoubleClick={() => handleRemoveEvent(date, event.id)}
                               >
-                                {event}
+                                {event.title}
                               </div>
                             ));
                           } else {
@@ -346,11 +471,11 @@ function Calendar() {
           <h3 className="text-center mb-3">Events for {selectedDate}</h3>
           <div className="event-list">
             {filteredEvents.map((event, index) => (
-              <div key={index} className="event-item d-flex align-items-center">
-                <span className="event-text">{event}</span>
+              <div key={event.id} className="event-item d-flex align-items-center">
+                <span className="event-text">{event.title}</span>
                 <button
                   className="btn btn-sm btn-danger ml-2"
-                  onClick={() => handleRemoveEvent(selectedDate, index)}
+                  onClick={() => handleRemoveEvent(selectedDate, event.id)}
                 >
                   Remove
                 </button>
