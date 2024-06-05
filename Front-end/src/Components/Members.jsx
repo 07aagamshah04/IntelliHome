@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import MemberProfile from "./Member_Profile";
 import { FaPlus } from "react-icons/fa";
+import Loader from "./Loader";
 // import { castObject } from "../../../Back-end/models/family";
 
 const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
@@ -12,6 +13,7 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
   const [currentEmail, setCurrentEmail] = useState("");
   const [currentRole, setCurrentRole] = useState("");
   const [users, setUsers] = useState();
+  const [loading, setLoading] = useState(false);
 
   const handleInvitationClick = () => {
     if (users.length == 5) {
@@ -30,6 +32,7 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const data = {
           name: "just authenticating and getting token",
@@ -84,6 +87,7 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
         console.log("error");
         alert("Error fetching the data");
       }
+      setLoading(false);
     };
 
     fetchData();
@@ -122,33 +126,39 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
         ></div>
       </div>
       {/* Render MemberProfile components inside the map function */}
-      {users &&
-        users.map((person, index) => (
-          <MemberProfile
-            key={person.email} // Make sure to provide a unique key
-            username={person.userName}
-            role={person.role ? "Family Manager" : "Member"}
-            logo={person.logo}
-            index={index}
-            email={person.email}
-            user={currentEmail}
-            userRole={currentRole}
-            handleGroupClick={handleGroupClick}
-          />
-        ))}
-      <button
-        type="button"
-        className="btn btn-outline-secondary"
-        style={{ color: "black", marginBottom: "10px", marginTop: "10px" }}
-        onClick={handleInvitationClick}
-      >
-        <FaPlus style={{ color: "#397FDA" }} />{" "}
-        {`Send invitations (${5 - (users ? users.length : 0)})`}
-      </button>
-      {!exceed ? null : (
-        <div style={{ color: "red", marginLeft: "5px" }}>
-          * You have already invite 5 members can&apos;t invite more.
-        </div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          {users &&
+            users.map((person, index) => (
+              <MemberProfile
+                key={person.email} // Make sure to provide a unique key
+                username={person.userName}
+                role={person.role ? "Family Manager" : "Member"}
+                logo={person.logo}
+                index={index}
+                email={person.email}
+                user={currentEmail}
+                userRole={currentRole}
+                handleGroupClick={handleGroupClick}
+              />
+            ))}
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            style={{ color: "black", marginBottom: "10px", marginTop: "10px" }}
+            onClick={handleInvitationClick}
+          >
+            <FaPlus style={{ color: "#397FDA" }} />{" "}
+            {`Send invitations (${5 - (users ? users.length : 0)})`}
+          </button>
+          {!exceed ? null : (
+            <div style={{ color: "red", marginLeft: "5px" }}>
+              * You have already invite 5 members can&apos;t invite more.
+            </div>
+          )}
+        </>
       )}
     </div>
   );

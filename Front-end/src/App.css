@@ -12,11 +12,11 @@ body,html{
   overflow: auto !important;
 }
 .blog-h1 {
-  font-size: 70px;
+  font-size: 35px;
   font-weight: 500;
   color: #4285F4; /* Google Blue */
   text-align: center;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   background: linear-gradient(45deg, #4285F4, #DB4437, #F4B400, #0F9D58);
   -webkit-background-clip: text;
   background-clip: text;
@@ -26,7 +26,7 @@ body,html{
 }
 @media screen and (max-width: 767px) {
   .blog-h1 {
-    font-size: 40px;
+    font-size: 20px;
   }
 }
 
@@ -65,6 +65,7 @@ body,html{
 
 .margin-footer{
   margin-left: 5px;
+  margin-bottom: 27px;
 }
 .flex-direction{
   display: flex;
@@ -72,7 +73,12 @@ body,html{
   justify-content: center;
   margin-left: 4px;
 }
+@media (max-width: 992px) {
+  .margin-footer{
+    margin-bottom: 3px;
+  }
 
+}
 
 /*                                                                 Slogan                                                   */
 
@@ -456,6 +462,9 @@ body{margin-top:20px;}
   font-size: 1rem;
 }
 @media (max-width:990px) {
+  .nav-fill .nav-item .nav-link, .nav-justified .nav-item .nav-link{
+    width: 90% !important;
+  }
   .navbar-nav{
     gap: 0px !important;
   }
@@ -678,3 +687,70 @@ body{margin-top:20px;}
 }
 
 /*                                                                   IntelliVault                                         */
+@media (max-width:768px) {
+  .document-section{
+    margin-left: 1px !important;
+  }
+  .document-folder-icon{
+    margin-right: 1px !important;
+  }
+  .document-file-size{
+    margin-right: 4px !important;
+    margin-left: 4px !important;
+  }
+  .document-trash-icon{
+    margin-right: 4px !important;
+  }
+  .document-delete-icon{
+    margin-right: 4px !important;
+    
+  }
+  .file-submission{
+    padding-left: 40px !important;
+  }
+}
+.nav-pills{
+  --bs-nav-pills-link-active-bg: #57595c !important;
+}
+.nav{
+  --bs-nav-link-hover-color: #080808 !important;
+}
+
+/*                                                                   Alert                                                */
+.alert{
+  color: rgb(190, 20, 20) !important;
+  font-size: 15px;
+  /* font-style: italic; */
+}
+
+
+/*                                                                   HealthCare                                             */
+
+
+
+/* Ensure the row uses flexbox and stretches the children */
+.row.d-flex {
+  display: flex;
+  align-items: stretch;
+}
+
+/* Make sure each column grows equally */
+.col-md-6 {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make sure the form and messages grow to fill the space */
+form.flex-grow-1,
+.messages.flex-grow-1 {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure that textareas grow with the form */
+textarea.flex-grow-1 {
+  flex-grow: 1;
+}
+
+

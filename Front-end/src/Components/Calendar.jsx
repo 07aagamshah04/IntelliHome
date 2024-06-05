@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Modal, Button, Form } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa6";
+import Loader from "./Loader"; // Import the Loader component
 
 function Calendar() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const [calendarData, setCalendarData] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
+
   useEffect(() => {
     generateCalendarData(year, month);
   }, [year, month]);
@@ -21,12 +23,10 @@ function Calendar() {
     const monthData = [];
     let currentWeek = [];
 
-    // Add empty slots for days before the start of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
       currentWeek.push("");
     }
 
-    // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       currentWeek.push(day);
       if (currentWeek.length === 7) {
@@ -35,7 +35,6 @@ function Calendar() {
       }
     }
 
-    // Add remaining days of the last week
     if (currentWeek.length > 0) {
       while (currentWeek.length < 7) {
         currentWeek.push("");
@@ -76,28 +75,10 @@ function Calendar() {
   const [eventDay, setEventDay] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [newEventAdded, setNewEventAdded] = useState(false);
-  // const handleClose = () => {
-  //   //   // if (e.target === e.currentTarget) {
-  //   setShow(false); // Close the modal
-  //   setEventTitle("");
-  //   setEventDay("");
-  //   setEventTime("");
-  //   //   resetFields(); // Reset input fields when modal is closed
-  //   //   // }
-  // };
-
-  // const handleShow = () => {
-  //   setShow(true); // Show the modal
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Process your form submission here
     setShow(false);
-    // addEvent(eventDay, eventTitle);
-    console.log("Event Title:", eventTitle);
-    console.log("Event Day:", eventDay);
-    console.log("Event Time:", eventTime);
     const formdata = {
       title: eventTitle,
       date: eventDay,
@@ -105,9 +86,7 @@ function Calendar() {
     };
     const fetchData = async () => {
       try {
-        const data = {
-          name: "just authenticating and getting token",
-        };
+        const data = { name: "just authenticating and getting token" };
         const response = await fetch(
           "http://localhost:8000/api/dashboard/members-token-verify",
           {
@@ -134,8 +113,6 @@ function Calendar() {
             );
             if (response.ok) {
               const data = await response.json();
-              console.log("Event Added sucessfully...");
-              console.log(data);
               setNewEventAdded(!newEventAdded);
             }
           } catch (error) {
@@ -146,7 +123,6 @@ function Calendar() {
           alert(errorData.msg);
         }
       } catch (error) {
-        console.log("error");
         alert("Error fetching the data");
       }
     };
@@ -154,31 +130,12 @@ function Calendar() {
     fetchData();
   };
 
-  // resetFields(); // Reset input fields after form submission
-  // const resetFields = () => {
-  // };
-
   const [eventData, setEventData] = useState({});
-  // Function to add an event for a specific date
-  // const addEvent = (date, event) => {
-  //   // Create a new object by copying the existing one
-  //   const newEventData = { ...eventData };
-  //   // If the date already exists in the data, add the event to its array
-  //   if (newEventData[date]) {
-  //     newEventData[date].push(event);
-  //   } else {
-  //     // If the date doesn't exist, create a new array with the event
-  //     newEventData[date] = [event];
-  //   }
-  //   // Update the state with the new data
-  //   // setEventData(newEventData);
-  // };
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Set loading to true when fetch starts
       try {
-        const data = {
-          name: "just authenticating and getting token",
-        };
+        const data = { name: "just authenticating and getting token" };
         const response = await fetch(
           "http://localhost:8000/api/dashboard/members-token-verify",
           {
@@ -204,9 +161,6 @@ function Calendar() {
             );
             if (response.ok) {
               const data = await response.json();
-              console.log("Fetched sucessfully...");
-              console.log(data);
-              // const data = await response.json();
               const transformedData = data.reduce((acc, event) => {
                 if (!acc[event.eventDate]) {
                   acc[event.eventDate] = [];
@@ -228,24 +182,15 @@ function Calendar() {
           alert(errorData.msg);
         }
       } catch (error) {
-        console.log("error");
         alert("Error fetching the data");
+      } finally {
+        setLoading(false); // Set loading to false when fetch completes
       }
     };
 
     fetchData();
   }, [newEventAdded]);
-  // Function to remove an event for a specific date
-  // const removeEvent = (date, eventIndex) => {
-  //   // Create a new object by copying the existing one
-  //   const newEventData = { ...eventData };
-  //   // If the date exists in the data, remove the event from its array
-  //   if (newEventData[date]) {
-  //     newEventData[date].splice(eventIndex, 1);
-  //     // Update the state with the new data
-  //     setEventData(newEventData);
-  //   }
-  // };
+
   const [selectedDate, setSelectedDate] = useState("");
   const handleBoxClick = (day, month, year) => {
     if (parseInt(month) < 10) {
@@ -260,27 +205,29 @@ function Calendar() {
       } else {
         setSelectedDate(year + "-" + month + "-" + day);
       }
-      // setSelectedDate(year + "-" + month + "-" + day);
     }
-    console.log(eventData);
   };
 
   const filteredEvents = eventData[selectedDate] || [];
   const handleRemoveEvent = async (eventDate, eventId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/dashboard/remove-event/${eventId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/dashboard/remove-event/${eventId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
       if (response.ok) {
-        // Update state to reflect the removal
         setEventData((prevEvents) => {
           const updatedEvents = { ...prevEvents };
-          updatedEvents[eventDate] = updatedEvents[eventDate].filter((event) => event.id !== eventId);
+          updatedEvents[eventDate] = updatedEvents[eventDate].filter(
+            (event) => event.id !== eventId
+          );
           return updatedEvents;
         });
       } else {
@@ -291,11 +238,9 @@ function Calendar() {
     }
   };
 
-
   return (
     <>
       <div className="container mt-4">
-        {/* <div className="container"></div> */}
         <div className="container">
           <div className="row justify-content-start mb-4">
             <div className="col-auto d-flex">
@@ -338,85 +283,90 @@ function Calendar() {
               </button>
             </div>
           </div>
-
-          <div className="row align-items-center">
-            <div className="field1 border">Sun</div>
-            <div className="field1 border">Mon</div>
-            <div className="field1 border">Tue</div>
-            <div className="field1 border">Wed</div>
-            <div className="field1 border">Thu</div>
-            <div className="field1 border">Fri</div>
-            <div className="field1 border">Sat</div>
-          </div>
-          {calendarData.map((week, index) => (
-            <div key={index} className="row" style={{ padding: "0" }}>
-              {week.map((day, idx) => (
-                <div
-                  key={idx}
-                  className={`field d-flex justify-content-center border`}
-                  style={{ padding: "0" }}
-                >
-                  <div
-                    className="scrollable-div"
-                    style={{
-                      overflowY: "auto",
-                      position: "",
-                      width: "100%",
-                    }}
-                    onClick={() => handleBoxClick(day, month + 1, year)}
-                  >
-                    {day !== "" ? (
-                      <>
-                        <div className="d-flex justify-content-center">
-                          <div
-                            className={`rounded-circle d-flex justify-content-center align-items-center${
-                              day !== "" &&
-                              day === new Date().getDate() &&
-                              month === new Date().getMonth() &&
-                              year === new Date().getFullYear()
-                                ? " date"
-                                : " date1"
-                            }`}
-                          >
-                            {day}
-                          </div>
-                        </div>
-                        {Object.keys(eventData).map((date) => {
-                          let a = date.split("-");
-
-                          if (
-                            year === parseInt(a[0]) &&
-                            month + 1 === parseInt(a[1]) &&
-                            day === parseInt(a[2])
-                          ) {
-                            return eventData[date].map((event, index) => (
-                              <div
-                                key={event.id}
-                                className="event"
-                                style={{
-                                  textAlign: "left",
-                                  marginTop: "2px",
-                                  borderRadius: "10px",
-                                  color: "blue",
-                                }}
-                                onDoubleClick={() => handleRemoveEvent(date, event.id)}
-                              >
-                                {event.title}
-                              </div>
-                            ));
-                          } else {
-                            null; // Return null if the condition doesn't match
-                          }
-                        })}
-                      </>
-                    ) : (
-                      ""
-                    )}
+          {loading ? (
+            <Loader /> // Show loader while loading
+          ) : (
+            <>
+              <div className="row align-items-center">
+                {days.map((day, index) => (
+                  <div key={index} className="field1 border">
+                    {day}
                   </div>
+                ))}
+              </div>
+              {calendarData.map((week, index) => (
+                <div key={index} className="row" style={{ padding: "0" }}>
+                  {week.map((day, idx) => (
+                    <div
+                      key={idx}
+                      className={`field d-flex justify-content-center border`}
+                      style={{ padding: "0" }}
+                    >
+                      <div
+                        className="scrollable-div"
+                        style={{
+                          overflowY: "auto",
+                          position: "",
+                          width: "100%",
+                        }}
+                        onClick={() => handleBoxClick(day, month + 1, year)}
+                      >
+                        {day !== "" ? (
+                          <>
+                            <div className="d-flex justify-content-center">
+                              <div
+                                className={`rounded-circle d-flex justify-content-center align-items-center${
+                                  day !== "" &&
+                                  day === new Date().getDate() &&
+                                  month === new Date().getMonth() &&
+                                  year === new Date().getFullYear()
+                                    ? " date"
+                                    : " date1"
+                                }`}
+                              >
+                                {day}
+                              </div>
+                            </div>
+                            {Object.keys(eventData).map((date) => {
+                              let a = date.split("-");
+
+                              if (
+                                year === parseInt(a[0]) &&
+                                month + 1 === parseInt(a[1]) &&
+                                day === parseInt(a[2])
+                              ) {
+                                return eventData[date].map((event, index) => (
+                                  <div
+                                    key={event.id}
+                                    className="event"
+                                    style={{
+                                      textAlign: "left",
+                                      marginTop: "2px",
+                                      borderRadius: "10px",
+                                      color: "blue",
+                                    }}
+                                    onDoubleClick={() =>
+                                      handleRemoveEvent(date, event.id)
+                                    }
+                                  >
+                                    {event.title}
+                                  </div>
+                                ));
+                              } else {
+                                return null;
+                              }
+                            })}
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
-            </div>
-          ))}
+            </>
+          )}
         </div>
       </div>
       <Modal
@@ -471,7 +421,10 @@ function Calendar() {
           <h3 className="text-center mb-3">Events for {selectedDate}</h3>
           <div className="event-list">
             {filteredEvents.map((event, index) => (
-              <div key={event.id} className="event-item d-flex align-items-center">
+              <div
+                key={event.id}
+                className="event-item d-flex align-items-center"
+              >
                 <span className="event-text">{event.title}</span>
                 <button
                   className="btn btn-sm btn-danger ml-2"

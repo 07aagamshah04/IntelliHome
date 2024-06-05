@@ -6,17 +6,17 @@ const Faqs = () => {
     {
       question: "How does the health care chatbot work?",
       answer:
-        "Our health care chatbot provides personalized health advice and assistance based on user input. It can answer health-related questions, provide medication reminders, and offer guidance on maintaining a healthy lifestyle.",
+        "Our health care chatbot provides personalized health advice and assistance based on user input. It can answer health-related questions, and offer guidance on maintaining a healthy lifestyle.",
     },
     {
-      question: "How does IntellHome handle digital documents and records?",
+      question: "How does IntelliHome handle digital documents and records?",
       answer:
-        "IntellHome provides a secure platform for storing and organizing digital documents such as contracts, receipts, insurance policies, and medical records. Users can access their documents from anywhere, and IntellHome ensures data security and privacy.",
+        "IntelliHome provides a secure platform for storing and organizing digital documents such as aadhar, marksheets, insurance policies, and medical records. Users can access their documents from anywhere, and IntelliHome ensures data security and privacy.",
     },
     {
-      question: " How does IntellHome handle emergencies?",
+      question: "How can a family manager invite members to join their group?",
       answer:
-        " In case of emergencies, IntellHome allows users to quickly send alerts and notifications to all household members via email. This feature ensures that everyone is informed and can take appropriate action in emergency situations.",
+        "The family manager can invite members through the invitation page, which is accessible only to them. By accessing this page, the manager can send an invitation link via email to the designated person.",
     },
   ];
 
@@ -88,7 +88,7 @@ const Faqs = () => {
             >
               <i className="lni-emoji-sad"></i>
               <p className="mb-0 px-2">Cant find your answers?</p>
-              <a href="#"> Contact us</a>
+              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=intellihome.official@gmail.com" target="_blank">Contact us</a>
             </div>
           </div>
         </div>

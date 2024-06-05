@@ -4,22 +4,23 @@ import family_2 from "../../assets/family-2.jpg";
 import family_3 from "../../assets/family-3.jpg";
 const heading = [
   [
-    "Home Management and Organization",
-    "This category can include features such as home inventory management, grocery list organization, and digital document storage. It focuses on helping users streamline their household tasks and keep track of important information related to their home life.",
+    "Event Management and Family Interaction",
+    "This category includes tools for keeping family members organized and connected. It features a dashboard for scheduling and managing events, as well as a group chat for family communication.",
   ],
   [
-    "Family Health and Well-being",
-    "Under this heading, you can include features related to health care assistance, including the health care chatbot, emergency notifications, and tools for managing health records. It emphasizes promoting the health and well-being of all family members.",
+    "Healthcare Guidance and Well-being",
+    "Focused on promoting family health, this category provides a comprehensive healthcare chatbot that offers personalized guidance. Users can input detailed information about their symptoms, allergies, and vital signs, upon which the chatbot suggests appropriate mitigation measures. It also advises on necessary specialists or lab tests.",
   ],
   [
-    "Personal Finance and Security",
-    "This category encompasses features related to financial management, such as tracking expenses, budgeting, and accessing financial information securely. It also includes security-related features like password management and emergency notifications to ensure the safety and security of users' personal information and finances.",
+    "Memory Sharing and Secure Document Storage",
+    "This category helps families preserve memories and secure important documents. It includes a blog for sharing personal stories and a secure storage feature for important documents like ID cards and certificates.",
   ],
 ];
+
 const images = [family_1, family_2, family_3];
 const Headings = () => {
   return (
-    <div className="container marketing">
+    <div className="container marketing" id="about">
       {heading.map((pair, index) => (
         <Heading
           key={pair[0]}

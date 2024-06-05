@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 import "../colorlib-regform-17/colorlib-regform-17/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css";
 import "../colorlib-regform-17/colorlib-regform-17/css/style.css";
+import { toast } from "react-toastify";
 import image1 from "../colorlib-regform-17/colorlib-regform-17/images/image1.jpg";
 import { useEffect, useRef, useState } from "react";
 import OtpInput from "./OtpInput";
@@ -49,12 +51,18 @@ const RegistrationPage = () => {
       pass2.current.value === "" ||
       pass1.current.value !== pass2.current.value
     ) {
-      alert("WRONG INPUTS ENTERED OR FIELD IS MISSING OR PASSWORD INCORRECT");
+      // alert("WRONG INPUTS ENTERED OR FIELD IS MISSING OR PASSWORD INCORRECT");
+      toast.error("FIELD IS MISSING OR BOTH PASSWORDS ARE NOT MATCHING", {
+        position: toast.position,
+      });
       return;
     }
 
     if (pass1.current.value.length !== 8) {
-      alert("PASSWORD MUST CONTAINS 8 DIGITS OR CHARACTERS");
+      // alert("PASSWORD MUST CONTAINS 8 DIGITS OR CHARACTERS");
+      toast.error("PASSWORD MUST CONTAINS 8 DIGITS OR CHARACTERS", {
+        position: toast.position,
+      });
       return;
     }
 
@@ -64,7 +72,10 @@ const RegistrationPage = () => {
       age--;
     }
     if (age < 0) {
-      alert("WRONG DOB ENTERED");
+      // alert("WRONG DOB ENTERED");
+      toast.error("WRONG DOB ENTERED", {
+        position: toast.position,
+      });
       return;
     } else {
       SetAge(age);
@@ -102,20 +113,37 @@ const RegistrationPage = () => {
             }
           );
           if (response.ok) {
-            alert("OTP SENT TO YOUR EMAIL");
+            // alert("OTP SENT TO YOUR EMAIL");
+            // setShow(true);
+            // setAlertMessage("OTP SENT TO YOUR EMAIL");
+            toast.success("OTP SENT TO YOUR EMAIL", {
+              position: toast.position,
+            });
           } else {
             const errorData = await response.json();
-            alert(errorData.msg);
+            // alert(errorData.msg);
+            toast.error(errorData.msg, {
+              position: toast.position,
+            });
           }
         } catch (error) {
-          console.error("Error adding user:", error);
+          // console.error("Error adding user:", error);
+          toast.error("Error adding user", {
+            position: toast.position,
+          });
         }
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        // alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      alert("Email-id already exists");
+      // alert("Email-id already exists");
+      toast.warning("Email-id already exists", {
+        position: toast.position,
+      });
     }
   };
 
@@ -147,18 +175,31 @@ const RegistrationPage = () => {
           body: JSON.stringify(formData),
         });
         if (response.ok) {
-          alert("Thank you for registration!!");
+          // alert("Thank you for registration!!");
+          toast.success("Thank you for registration!!", {
+            position: toast.position,
+          });
           navigate(`/sign-in?familyId=${familyId}`);
         } else {
           const errorData = await response.json();
-          alert(errorData.msg);
+          // alert(errorData.msg);
+          toast.error(errorData.msg, {
+            position: toast.position,
+          });
         }
       } catch (error) {
+        // eslint-disable-next-line no-undef
         const errorData = await response.json();
-        alert(errorData.msg);
+        // alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: toast.position,
+        });
       }
     } else {
-      alert("Wrong entered");
+      // alert("Wrong entered");
+      toast.error("Wrong entered", {
+          position: toast.position,
+        });
       return;
     }
   };
@@ -172,101 +213,103 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="registration-wrapper" style={{ background: "#E2DFDA" }}>
-      <div className="registration-inner" style={{ borderRadius: "10px" }}>
-        <div className="registration-image-holder">
-          <img
-            className="registration-imagii"
-            src={image1}
-            style={{ borderRadius: "10px" }}
-            alt=""
-          />
-        </div>
-        <form action="" onSubmit={doWork}>
-          <h3>Create Account</h3>
-          <div className="registration-form-wrapper">
-            <input
-              type="text"
-              ref={uname}
-              placeholder="Username"
-              className="registration-form-control"
-            />
-            <i className="zmdi zmdi-account"></i>
-          </div>
-          <div className="registration-form-wrapper">
-            <input
-              type="email"
-              ref={email}
-              placeholder="Email Address"
-              className="registration-form-control"
-            />
-            <i className="zmdi zmdi-email" />
-          </div>
-          <div className="registration-form-wrapper">
-            <select
-              name=""
-              id=""
-              ref={gender}
-              className="registration-form-control"
-            >
-              <option value="">Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-            <i
-              className="zmdi zmdi-caret-down"
-              style={{ fontSize: "17px" }}
-            ></i>
-          </div>
-          <div className="registration-form-wrapper">
-            <input
-              type="date"
-              ref={dob}
-              className="registration-form-control" /*style={{width : ""}}*/
+    <>
+      <div className="registration-wrapper" style={{ background: "#E2DFDA" }}>
+        <div className="registration-inner" style={{ borderRadius: "10px" }}>
+          <div className="registration-image-holder">
+            <img
+              className="registration-imagii"
+              src={image1}
+              style={{ borderRadius: "10px" }}
+              alt=""
             />
           </div>
-          <div className="registration-form-wrapper">
-            <input
-              type="password"
-              placeholder="Password"
-              ref={pass1}
-              className="registration-form-control"
-            />
-            <i className="zmdi zmdi-lock"></i>
-          </div>
-          <div className="registration-form-wrapper">
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              ref={pass2}
-              className="registration-form-control"
-            />
-            <i className="zmdi zmdi-lock"></i>
-          </div>
-          {emailChecker && (
+          <form action="" onSubmit={doWork}>
+            <h3>Create Account</h3>
             <div className="registration-form-wrapper">
-              <p>Enter OTP sent to {email.current.value}</p>
-              <OtpInput length={4} onOtpSubmit={onOtpSubmit} />
+              <input
+                type="text"
+                ref={uname}
+                placeholder="Username"
+                className="registration-form-control"
+              />
+              <i className="zmdi zmdi-account"></i>
             </div>
-          )}
-          <button className="buttoni">
-            Register
-            <i className="zmdi zmdi-arrow-right"></i>
-          </button>
-          <div className="text-center fs-5 mt-4">
-            Already have an Account ?
-            <Link
-              to="#"
-              onClick={handleSignInClick}
-              className="register-signIn"
-            >
-              &nbsp;Sign in
-            </Link>
-          </div>
-        </form>
+            <div className="registration-form-wrapper">
+              <input
+                type="email"
+                ref={email}
+                placeholder="Email Address"
+                className="registration-form-control"
+              />
+              <i className="zmdi zmdi-email" />
+            </div>
+            <div className="registration-form-wrapper">
+              <select
+                name=""
+                id=""
+                ref={gender}
+                className="registration-form-control"
+              >
+                <option value="">Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              <i
+                className="zmdi zmdi-caret-down"
+                style={{ fontSize: "17px" }}
+              ></i>
+            </div>
+            <div className="registration-form-wrapper">
+              <input
+                type="date"
+                ref={dob}
+                className="registration-form-control" /*style={{width : ""}}*/
+              />
+            </div>
+            <div className="registration-form-wrapper">
+              <input
+                type="password"
+                placeholder="Password"
+                ref={pass1}
+                className="registration-form-control"
+              />
+              <i className="zmdi zmdi-lock"></i>
+            </div>
+            <div className="registration-form-wrapper">
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                ref={pass2}
+                className="registration-form-control"
+              />
+              <i className="zmdi zmdi-lock"></i>
+            </div>
+            {emailChecker && (
+              <div className="registration-form-wrapper">
+                <p>Enter OTP sent to {email.current.value}</p>
+                <OtpInput length={4} onOtpSubmit={onOtpSubmit} />
+              </div>
+            )}
+            <button className="buttoni">
+              Register
+              <i className="zmdi zmdi-arrow-right"></i>
+            </button>
+            <div className="text-center fs-5 mt-4">
+              Already have an Account ?
+              <Link
+                to="#"
+                onClick={handleSignInClick}
+                className="register-signIn"
+              >
+                &nbsp;Sign in
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

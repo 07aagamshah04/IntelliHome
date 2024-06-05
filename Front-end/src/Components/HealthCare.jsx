@@ -64,7 +64,7 @@ const HealthcareChatbot = () => {
       }
 
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
 
       // Parse and format the response
       const formattedResponse = {
@@ -78,7 +78,7 @@ const HealthcareChatbot = () => {
       const myarr = formattedResponse.data.split("\n");
       setMessages(myarr);
     } catch (error) {
-      console.error("Error fetching bot response:", error);
+      // console.error("Error fetching bot response:", error);
       setError("Error fetching bot response. Please try again later.");
     }
 
@@ -101,105 +101,104 @@ const HealthcareChatbot = () => {
 
   return (
     <div className="container mt-5">
-      <div className="row d-flex">
-        <div className="col-md-6 border rounded p-3">
-          <h3>Healthcare Information</h3>
-          <form>
-            <div className="mb-3">
-              <label htmlFor="currentSymptoms" className="form-label">
-                Current Symptoms
-              </label>
-              <textarea
-                className="form-control"
-                id="currentSymptoms"
-                name="currentSymptoms"
-                value={input.currentSymptoms}
-                onChange={handleChange}
-              ></textarea>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="medications" className="form-label">
-                Medications
-              </label>
-              <textarea
-                className="form-control"
-                id="medications"
-                name="medications"
-                value={input.medications}
-                onChange={handleChange}
-              ></textarea>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="allergies" className="form-label">
-                Allergies
-              </label>
-              <textarea
-                className="form-control"
-                id="allergies"
-                name="allergies"
-                value={input.allergies}
-                onChange={handleChange}
-              ></textarea>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="vitalSigns" className="form-label">
-                Vital Signs
-              </label>
-              <textarea
-                className="form-control"
-                id="vitalSigns"
-                name="vitalSigns"
-                value={input.vitalSigns}
-                onChange={handleChange}
-              ></textarea>
-            </div>
-            <div className="mb-3">
-              <button
-                type="button"
-                className="btn btn-primary me-2"
-                onClick={fetchBotResponse}
-              >
-                Submit and Analyze
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={handleReset}
-              >
-                Reset
-              </button>
-            </div>
-          </form>
+  <div className="row d-flex align-items-stretch">
+    <div className="col-md-6 border rounded p-3 d-flex flex-column">
+      <h3>Healthcare Information</h3>
+      <form className="flex-grow-1 d-flex flex-column">
+        <div className="mb-3">
+          <label htmlFor="currentSymptoms" className="form-label">
+            Current Symptoms
+          </label>
+          <textarea
+            className="form-control flex-grow-1"
+            id="currentSymptoms"
+            name="currentSymptoms"
+            value={input.currentSymptoms}
+            onChange={handleChange}
+          ></textarea>
         </div>
-        <div className="col-md-6 border rounded p-3 d-flex flex-column justify-content-between mt-md-0 mt-3">
-          <div>
-            <h3>Chatbot Response</h3>
-            <div className="messages">
-              {isLoading && (
-                <div className="d-flex align-items-center mb-3">
-                  <img
-                    src={ChatGptTypingLogo}
-                    alt="ChatGPT Typing"
-                    className="me-1 rounded-circle"
-                    style={{ width: "60px", height: "50px" }}
-                  />
-                  <span> is generating...</span>
-                </div>
-              )}
-              {messages.map(
-                (message, index) =>
-                  message !== "" && (
-                    <div key={index} className={`message ${message.author}`}>
-                      {`->${message}\n`}
-                    </div>
-                  )
-              )}
-              {error && <div className="error">{error}</div>}
-            </div>
+        <div className="mb-3">
+          <label htmlFor="medications" className="form-label">
+            Medications
+          </label>
+          <textarea
+            className="form-control flex-grow-1"
+            id="medications"
+            name="medications"
+            value={input.medications}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="allergies" className="form-label">
+            Allergies
+          </label>
+          <textarea
+            className="form-control flex-grow-1"
+            id="allergies"
+            name="allergies"
+            value={input.allergies}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="vitalSigns" className="form-label">
+            Vital Signs
+          </label>
+          <textarea
+            className="form-control flex-grow-1"
+            id="vitalSigns"
+            name="vitalSigns"
+            value={input.vitalSigns}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+        <div className="mb-3">
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            onClick={fetchBotResponse}
+          >
+            Submit and Analyze
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleReset}
+          >
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
+    <div className="col-md-6 border rounded p-3 d-flex flex-column mt-md-0 mt-3">
+      <h3>Chatbot Response</h3>
+      <div className="messages flex-grow-1 d-flex flex-column">
+        {isLoading && (
+          <div className="d-flex align-items-center mb-3">
+            <img
+              src={ChatGptTypingLogo}
+              alt="ChatGPT Typing"
+              className="me-1 rounded-circle"
+              style={{ width: "60px", height: "50px" }}
+            />
+            <span> is generating...</span>
           </div>
-        </div>
+        )}
+        {messages.map(
+          (message, index) =>
+            message !== "" && (
+              <div key={index} className={`message ${message.author}`}>
+                {`->${message}\n`}
+              </div>
+            )
+        )}
+        {error && <div className="error">{error}</div>}
       </div>
     </div>
+  </div>
+</div>
+
   );
 };
 
