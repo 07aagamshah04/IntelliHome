@@ -1,8 +1,10 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "../Modules/Posts.module.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Posts = () => {
   const [showModal, setShowModal] = useState(false);
@@ -27,33 +29,51 @@ const Posts = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ name: "just authenticating and getting token" }),
+            body: JSON.stringify({
+              name: "just authenticating and getting token",
+            }),
             credentials: "include",
           }
         );
 
         if (authResponse.ok) {
-          const postsResponse = await fetch("http://localhost:8000/api/blogs/posts", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          });
-          const data = await postsResponse.json();
-          console.log(data);
-          if (Array.isArray(data)) {
-            setPosts(data);
+          const postsResponse = await fetch(
+            "http://localhost:8000/api/blogs/posts",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
+          if (postsResponse.status === 401) {
+            toast.error("You are Unauthorized!!! Kindly SignIn or Register", {
+              position: "top-right",
+            });
+            setTimeout(() => {
+              window.location.href = "/sign-in";
+            }, 3000);
           } else {
-            console.error("Fetched data is not an array:", data);
+            const data = await postsResponse.json();
+            if (Array.isArray(data)) {
+              setPosts(data);
+            } else {
+              toast.error("Fetched data is not an array", {
+                position: "top-right",
+              });
+            }
           }
         } else {
           const errorData = await authResponse.json();
-          alert(errorData.msg);
+          toast.error(errorData.msg, {
+            position: "top-right",
+          });
         }
       } catch (error) {
-        console.error("Error fetching posts:", error);
-        alert("Error fetching the data");
+        toast.error("Error fetching posts", {
+          position: "top-right",
+        });
       }
     };
 
@@ -76,7 +96,9 @@ const Posts = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (postTitle === "" || postText === "" || selectedFiles.length === 0) {
-      setErrorMessage("*Every field is required");
+      toast.error("Every field is required", {
+        position: "top-right",
+      });
       return;
     }
 
@@ -95,46 +117,64 @@ const Posts = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name: "just authenticating and getting token" }),
+          body: JSON.stringify({
+            name: "just authenticating and getting token",
+          }),
           credentials: "include",
         }
       );
 
       if (authResponse.ok) {
-        const postResponse = await fetch("http://localhost:8000/api/blogs/posts", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(post),
-        });
-
-        if (postResponse.ok) {
-          alert("Your Post has been posted");
-          const updatedResponse = await fetch("http://localhost:8000/api/blogs/posts", {
-            method: "GET",
+        const postResponse = await fetch(
+          "http://localhost:8000/api/blogs/posts",
+          {
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             credentials: "include",
+            body: JSON.stringify(post),
+          }
+        );
+
+        if (postResponse.ok) {
+          toast.success("Your Post has been posted", {
+            position: "top-right",
           });
+          const updatedResponse = await fetch(
+            "http://localhost:8000/api/blogs/posts",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
           const data = await updatedResponse.json();
           if (Array.isArray(data)) {
             setPosts(data);
           } else {
-            console.error("Fetched data is not an array:", data);
+            toast.error("Error fetching the updated posts", {
+              position: "top-right",
+            });
           }
         } else {
           const errorData = await postResponse.json();
-          alert(errorData.msg);
+          toast.error(errorData.msg, {
+            position: "top-right",
+          });
         }
       } else {
         const errorData = await authResponse.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: "top-right",
+        });
       }
     } catch (error) {
-      console.error("Error adding post:", error);
+      toast.error("Error adding post", {
+        position: "top-right",
+      });
     }
 
     setPostTitle("");
@@ -145,19 +185,28 @@ const Posts = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/blogs/posts/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/blogs/posts/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
-        alert("Post deleted successfully");
+        toast.success("Post deleted successfully", {
+          position: "top-right",
+        });
         setPosts(posts.filter((post) => post._id !== id));
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: "top-right",
+        });
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      toast.error("Error deleting post", {
+        position: "top-right",
+      });
     }
   };
 
@@ -165,7 +214,9 @@ const Posts = () => {
     <div className={styles.postiii}>
       <div className="container text-center">
         <blockquote className="blockquote">
-          <p className="mb-0 blog-h1">{"Family is not an important thing. It's everything."}</p>
+          <p className="mb-0 blog-h1">
+            {"Family is not an important thing. It's everything."}
+          </p>
         </blockquote>
         <Button onClick={() => setShowModal(true)}>Save Your Memories</Button>
       </div>

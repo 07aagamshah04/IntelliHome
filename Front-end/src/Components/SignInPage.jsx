@@ -1,11 +1,8 @@
-/*
- *Validation for email,password,redirecting to Dashboard if all is true, and also on register to registration page
- */
-
 import { useRef } from "react";
 import logo from "../assets/IntelliHome.png";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { toast } from "react-toastify";
 import {
   MDBBtn,
   MDBContainer,
@@ -32,16 +29,17 @@ const SignInPage = () => {
   const Validate = async (evt) => {
     evt.preventDefault();
     if (email.current.value === "" || pass.current.value === "") {
-      alert("DON'T LEAVE ANY FIELD BLANK");
+      toast.error("DON'T LEAVE ANY FIELD BLANK", {
+        position: toast.position,
+      });
       return;
     }
     if (pass.current.value.length !== 8) {
-      alert("Your password must be of 8 characters");
+      toast.error("Your password must be of 8 characters", {
+        position: toast.position,
+      });
       return;
     }
-    //validate email
-    //if true then validate password by checking that password is of correct email or not
-    //if all things are true then allow him to go to dashboard page
     try {
       let familyId = getQueryParam("familyId");
       if (!familyId) {
@@ -52,8 +50,6 @@ const SignInPage = () => {
         password: pass.current.value,
         familyId: familyId,
       };
-      //When deployed API change it
-      //Here credentails are used to allow to add cookie
       const response = await fetch("http://localhost:8000/api/signin", {
         method: "POST",
         headers: {
@@ -64,14 +60,20 @@ const SignInPage = () => {
         credentials: "include",
       });
       if (response.ok) {
-        alert("Verified successfully");
+        toast.success("Verified Successfully", {
+          position: toast.position,
+        });
         navigate("/home/dashboard");
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      alert("Error adding user:", error);
+      toast.error("Error logging User!", {
+        position: toast.position,
+      });
       return;
     }
     email.current.value = "";
@@ -83,10 +85,7 @@ const SignInPage = () => {
       className="d-flex justify-content-center align-items-center"
       style={{ height: "100vh", width: "100vw" }}
     >
-      <MDBCard
-        // style={{ height: "70vh", width: "70vw" }}
-        className="Sign-card"
-      >
+      <MDBCard className="Sign-card">
         <MDBRow className="g-0">
           <MDBCol md="6">
             <MDBCardImage
@@ -99,11 +98,6 @@ const SignInPage = () => {
           <MDBCol md="6">
             <MDBCardBody className="d-flex flex-column">
               <div className="d-flex flex-row mt-2">
-                {/* <MDBIcon
-                  fas
-                  icon="cubes fa-3x me-3"
-                  style={{ color: "#ff6219" }}
-                /> */}
                 <span className="h1 fw-bold mb-0">Sign In</span>
               </div>
 
@@ -126,7 +120,7 @@ const SignInPage = () => {
                 wrapperClass="mb-4"
                 ref={pass}
                 label="Password"
-                id="formControlLg"
+                id="formControlLg1"
                 type="password"
                 size="lg"
               />
@@ -136,7 +130,6 @@ const SignInPage = () => {
                 color="dark"
                 size="lg"
                 onClick={Validate}
-                // style={{background:"crims"}}
               >
                 Login
               </MDBBtn>

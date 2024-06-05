@@ -1,9 +1,8 @@
 const User = require("../models/users");
 const Family = require("../models/family");
+
 async function createNewUser(req, res) {
   const body = req.body;
-  // console.log(req.query);
-  // console.log(Object.keys(req.query).length);
   if (
     !body ||
     !body.userName ||
@@ -12,14 +11,8 @@ async function createNewUser(req, res) {
     !body.dob ||
     !body.password
   ) {
-    console.log(body);
     return res.status(400).json({ msg: "All fields are required" });
   }
-
-  // if (Object.keys(req.query).length === 0) {
-
-  // }
-  // console.log(body);
   try {
     const result1 = await User.create({
       userName: body.userName,
@@ -36,17 +29,15 @@ async function createNewUser(req, res) {
           members: [result1._id],
         });
       } catch (error) {
-        return res.status(400).json({ msg: "  Failed to add entry in Family" });
+        return res.status(400).json({ msg: "Failed to add in Family" });
       }
     } else {
       try {
-        console.log(req.body.familyId);
         const result = await Family.findOne({ _id: req.body.familyId });
-        // console.log(result);
         result.members.push(result1._id);
         await result.save();
       } catch (error) {
-        return res.status(400).json({ msg: "  Failed to add entry in Family" });
+        return res.status(400).json({ msg: "Failed to add in Family" });
       }
     }
 
@@ -64,7 +55,6 @@ async function signInUser(req, res) {
   }
 
   if (body.familyId === "nathi bhai") {
-    console.log("aayo");
     try {
       const token = await User.matchPasswordAndGenerateToken(
         body.email,
@@ -90,18 +80,17 @@ async function signInUser(req, res) {
     try {
       const user = await User.findOne({ email: body.email });
       if (!user) throw new Error("User not found!");
-      // console.log(user);
+
       const family = await Family.findOne({ members: user._id });
       if (!family) throw new Error("User's family not found!");
-      // console.log(family);
 
       const userFamilyId = family._id;
-      const newFamilyId = body.familyId; // Corrected typo from 'FamilyId' to 'familyId'
+      const newFamilyId = body.familyId;
 
       if (user.role === true && family.members.length > 1) {
         return res.status(400).json({
           message:
-            "You can't directly invite Family manager of another family....To invite him/her they have to delete entire group first",
+            "You can't directly invite Family manager of another family....To invite him/her they have to delete their entire group first",
         });
       } else if (user.role === false) {
         // Remove user from their current family
@@ -115,32 +104,21 @@ async function signInUser(req, res) {
           { _id: newFamilyId },
           { $addToSet: { members: user._id } }
         );
-
-        // return res
-        //   .status(200)
-        //   .json({ message: "User successfully moved to the new family." });
       } else {
         // User is a manager and the only member of the family, delete the family
-        // console.log("Deleting old family:", userFamilyId);
         await Family.deleteOne({ _id: userFamilyId });
 
-        // console.log("Changing user's role to false");
         // Change user's role to false and save
         const updatedUser = await User.findOneAndUpdate(
           { email: body.email },
           { role: false },
           { new: true }
         );
-        // console.log("Adding user to new family:", newFamilyId);
         // Add user to the new family
         await Family.updateOne(
           { _id: newFamilyId },
           { $addToSet: { members: user._id } }
         );
-        // return res.status(200).json({
-        //   message:
-        //     "User successfully moved to the new family and their previous family has been deleted.",
-        // });
       }
     } catch (error) {
       console.error("Error processing family change:", error);
@@ -172,39 +150,6 @@ async function signInUser(req, res) {
     }
   }
 }
-
-// async function signInUser(req, res) {
-//   const body = req.body;
-//   if (!body || !body.email || !body.password) {
-//     return res.status(400).json({ msg: "All fields are required" });
-//   }
-//   // const user = await User.findOne({ email: body.email });
-
-//   // if (!user) {
-//   //   return res.status(400).json({ msg: "User not found" });
-//   // }
-//   // if (user.password !== body.password) {
-//   //   return res.status(400).json({ msg: "Password is incorrect" });
-//   // }
-//   // return res.status(201).json({ msg: "succedd" });
-//   try {
-//     const token = await User.matchPasswordAndGenerateToken(
-//       body.email,
-//       body.password
-//     );
-
-//     // console.log(token);
-//     // res.cookie("uid", token, {
-//     //   domain: "www.shorturl.com",
-//     // });
-//     return res.cookie("token", token).status(201).json({ msg: "succed" });
-//   } catch (error) {
-//     // console.log(error);
-//     return res
-//       .status(400)
-//       .json({ msg: "Password is incorrect or email is incorrect" });
-//   }
-// }
 
 async function logoutUser(req, res) {
   res.clearCookie("token");

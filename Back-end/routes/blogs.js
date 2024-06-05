@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { getPosts, createPost, deletePost ,verifyMemebr } = require("../controllers/blogs");
+const {
+  getPosts,
+  createPost,
+  deletePost,
+  verifyMemebr,
+} = require("../controllers/blogs");
 
 // Get all posts
 router.get("/posts", getPosts);

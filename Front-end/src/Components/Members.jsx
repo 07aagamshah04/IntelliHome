@@ -1,10 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import MemberProfile from "./Member_Profile";
+import { toast } from "react-toastify";
 import { FaPlus } from "react-icons/fa";
-// import { castObject } from "../../../Back-end/models/family";
 
 const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
   const [invite, setInvite] = useState(false);
@@ -17,14 +14,14 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
     if (users.length == 5) {
       setExceed(true);
     } else {
-      // console.log("invitation sent...");
-      // console.log(invite); // Logs false
       if (currentRole !== "Family Manager") {
-        alert("Only Family Manager can invite Members!!");
+        toast.error("Only Family Manager can invite Members!!", {
+          position: toast.position,
+        });
         return;
       }
       setInvite(true);
-      handleInvitation(true); // Updates the state, but not immediately reflected
+      handleInvitation(true);
     }
   };
 
@@ -57,6 +54,14 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
                 credentials: "include",
               }
             );
+            if (response.status == 401) {
+              toast.error("You are Unauthorized!!! Kindly SignIn or Register", {
+                position: toast.position,
+              });
+              setTimeout(() => {
+                window.location.href = "/sign-in";
+              }, 3000);
+            }
             if (response.ok) {
               const data = await response.json();
               let updatedArray = data.data.map((obj) => {
@@ -65,44 +70,33 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
                   name.length > 1 ? `${name[0][0]}${name[1][0]}` : name[0][0];
                 return { ...obj, logo: shortname.toUpperCase() };
               });
-              // console.log(updatedArray);
-              // console.log(data.email);
               setUsers(updatedArray);
               setCurrentEmail(data.email);
               setCurrentRole(data.role);
               role_de_baba(data.role);
-              // alert(currentEmail);
             }
           } catch (error) {
-            alert("Error feching data");
+            toast.error("Error feching data", {
+              position: toast.position,
+            });
           }
         } else {
           const errorData = await response.json();
-          alert(errorData.msg);
+          toast.error(errorData.msg, {
+            position: toast.position,
+          });
         }
       } catch (error) {
-        console.log("error");
-        alert("Error fetching the data");
+        toast.error("Error fetching the data", {
+          position: toast.position,
+        });
       }
     };
 
     fetchData();
 
-    // role_de_baba(currentRole);
-
-    return () => {
-      // Cleanup logic here, if necessary
-    };
+    return () => {};
   }, [invite]);
-  // Run this effect whenever invite state changes
-
-  // useEffect(() => {
-  //   const updatedUsers = users.map((user) => ({
-  //     ...user,
-  //     logo: user.firstName[0] + user.lastName[0],
-  //   }));
-  //   setUsers(updatedUsers);
-  // }, []);
 
   return (
     <div

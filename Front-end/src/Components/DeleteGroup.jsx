@@ -1,12 +1,61 @@
 import { RiDeleteBinLine } from "react-icons/ri";
 import image from "../assets/5220.jpg";
+import { toast } from "react-toastify";
+
 const DeleteGroup = ({ userRole }) => {
-  const handleDeleteClickForGroup = () => {
-    // event.preventDefault();
-    alert(userRole);
+  const handleDeleteClickForGroup = async () => {
     if (userRole === "Family Manager") {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/family-settings/deleteGroup`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          toast.error("Failed to delete Group", {
+            position: toast.position,
+          });
+        } else {
+          const data = await response.json();
+          toast.success("Group deleted successfully", {
+            position: toast.position,
+          });
+          try {
+            const response = await fetch("http://localhost:8000/api/logout", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            });
+            if (response.ok) {
+              window.location.href = "/";
+            } else {
+              toast.error("Error in Logout", {
+                position: toast.position,
+              });
+            }
+          } catch (error) {
+            toast.error("Error in Logout", {
+              position: toast.position,
+            });
+          }
+        }
+      } catch (error) {
+        toast.error("Failed to delete group", {
+          position: toast.position,
+        });
+      }
     } else {
-      alert("Only Manager can delete it!!");
+      toast.error("Only Manager can delete it!!", {
+        position: toast.position,
+      });
       return;
     }
   };

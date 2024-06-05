@@ -2,13 +2,21 @@
 import { useEffect, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Modal, Button, Form } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
 function Calendar() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const [calendarData, setCalendarData] = useState([]);
+  const [show, setShow] = useState(false);
+  const [eventTitle, setEventTitle] = useState("");
+  const [eventDay, setEventDay] = useState("");
+  const [eventTime, setEventTime] = useState("");
+  const [newEventAdded, setNewEventAdded] = useState(false);
+  const [eventData, setEventData] = useState({});
+  const [selectedDate, setSelectedDate] = useState("");
+
   useEffect(() => {
     generateCalendarData(year, month);
   }, [year, month]);
@@ -71,38 +79,54 @@ function Calendar() {
     }
   };
 
-  const [show, setShow] = useState(false);
-  const [eventTitle, setEventTitle] = useState("");
-  const [eventDay, setEventDay] = useState("");
-  const [eventTime, setEventTime] = useState("");
-  const [newEventAdded, setNewEventAdded] = useState(false);
-  // const handleClose = () => {
-  //   //   // if (e.target === e.currentTarget) {
-  //   setShow(false); // Close the modal
-  //   setEventTitle("");
-  //   setEventDay("");
-  //   setEventTime("");
-  //   //   resetFields(); // Reset input fields when modal is closed
-  //   //   // }
-  // };
-
-  // const handleShow = () => {
-  //   setShow(true); // Show the modal
-  // };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Process your form submission here
+
     setShow(false);
-    // addEvent(eventDay, eventTitle);
-    console.log("Event Title:", eventTitle);
-    console.log("Event Day:", eventDay);
-    console.log("Event Time:", eventTime);
+
+    // Get current date and time
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // Months are zero-indexed
+    const currentDay = currentDate.getDate();
+    const currentHours = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+
+    // Parse event date and time
+    const [eventYear, eventMonth, eventDayi] = eventDay.split("-").map(Number);
+    const [eventHours, eventMinutes] = eventTime.split(":").map(Number);
+
+    // Check if event date is in the past
+    const eventDateIsPast =
+      eventYear < currentYear ||
+      (eventYear === currentYear && eventMonth < currentMonth) ||
+      (eventYear === currentYear &&
+        eventMonth === currentMonth &&
+        eventDayi < currentDay);
+
+    // Check if event time is in the past
+    const eventTimeIsPast =
+      eventYear === currentYear &&
+      eventMonth === currentMonth &&
+      eventDayi === currentDay &&
+      (eventHours < currentHours ||
+        (eventHours === currentHours && eventMinutes < currentMinutes));
+
+    if (eventDateIsPast || eventTimeIsPast) {
+      toast.error("Event date or time is in the past!", {
+        position: toast.position,
+      });
+      return;
+    }
+
     const formdata = {
       title: eventTitle,
       date: eventDay,
       time: eventTime,
     };
+    setEventDay("");
+    setEventTime("");
+    setEventTitle("");
     const fetchData = async () => {
       try {
         const data = {
@@ -134,45 +158,32 @@ function Calendar() {
             );
             if (response.ok) {
               const data = await response.json();
-              console.log("Event Added sucessfully...");
-              console.log(data);
+              toast.success("Event added successfully", {
+                position: toast.position,
+              });
               setNewEventAdded(!newEventAdded);
             }
           } catch (error) {
-            alert("Error feching data");
+            toast.error("Error fetching the data", {
+              position: toast.position,
+            });
           }
         } else {
           const errorData = await response.json();
-          alert(errorData.msg);
+          toast.success(errorData.msg, {
+            position: toast.position,
+          });
         }
       } catch (error) {
-        console.log("error");
-        alert("Error fetching the data");
+        toast.error("Error fetching the data", {
+          position: toast.position,
+        });
       }
     };
 
     fetchData();
   };
 
-  // resetFields(); // Reset input fields after form submission
-  // const resetFields = () => {
-  // };
-
-  const [eventData, setEventData] = useState({});
-  // Function to add an event for a specific date
-  // const addEvent = (date, event) => {
-  //   // Create a new object by copying the existing one
-  //   const newEventData = { ...eventData };
-  //   // If the date already exists in the data, add the event to its array
-  //   if (newEventData[date]) {
-  //     newEventData[date].push(event);
-  //   } else {
-  //     // If the date doesn't exist, create a new array with the event
-  //     newEventData[date] = [event];
-  //   }
-  //   // Update the state with the new data
-  //   // setEventData(newEventData);
-  // };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -204,9 +215,6 @@ function Calendar() {
             );
             if (response.ok) {
               const data = await response.json();
-              console.log("Fetched sucessfully...");
-              console.log(data);
-              // const data = await response.json();
               const transformedData = data.reduce((acc, event) => {
                 if (!acc[event.eventDate]) {
                   acc[event.eventDate] = [];
@@ -219,34 +227,44 @@ function Calendar() {
               }, {});
 
               setEventData(transformedData);
+            } else {
+              if (response.status == 401) {
+                toast.error(
+                  "You are Unauthorized!!! Kindly SignIn or Register",
+                  {
+                    position: toast.position,
+                  }
+                );
+                setTimeout(() => {
+                  window.location.href = "/sign-in";
+                }, 4000); // 3000 milliseconds delay (3 seconds)
+              } else {
+                toast.error("Error fetching the data", {
+                  position: toast.position,
+                });
+              }
             }
           } catch (error) {
-            alert("Error feching data");
+            toast.error("Error fetching the data", {
+              position: toast.position,
+            });
           }
         } else {
           const errorData = await response.json();
-          alert(errorData.msg);
+          toast.error(errorData.msg, {
+            position: toast.position,
+          });
         }
       } catch (error) {
-        console.log("error");
-        alert("Error fetching the data");
+        toast.error("Error fetching the data", {
+          position: toast.position,
+        });
       }
     };
 
     fetchData();
   }, [newEventAdded]);
-  // Function to remove an event for a specific date
-  // const removeEvent = (date, eventIndex) => {
-  //   // Create a new object by copying the existing one
-  //   const newEventData = { ...eventData };
-  //   // If the date exists in the data, remove the event from its array
-  //   if (newEventData[date]) {
-  //     newEventData[date].splice(eventIndex, 1);
-  //     // Update the state with the new data
-  //     setEventData(newEventData);
-  //   }
-  // };
-  const [selectedDate, setSelectedDate] = useState("");
+
   const handleBoxClick = (day, month, year) => {
     if (parseInt(month) < 10) {
       if (parseInt(day) < 10) {
@@ -260,37 +278,46 @@ function Calendar() {
       } else {
         setSelectedDate(year + "-" + month + "-" + day);
       }
-      // setSelectedDate(year + "-" + month + "-" + day);
     }
-    console.log(eventData);
   };
 
   const filteredEvents = eventData[selectedDate] || [];
   const handleRemoveEvent = async (eventDate, eventId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/dashboard/remove-event/${eventId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/dashboard/remove-event/${eventId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
       if (response.ok) {
         // Update state to reflect the removal
         setEventData((prevEvents) => {
           const updatedEvents = { ...prevEvents };
-          updatedEvents[eventDate] = updatedEvents[eventDate].filter((event) => event.id !== eventId);
+          updatedEvents[eventDate] = updatedEvents[eventDate].filter(
+            (event) => event.id !== eventId
+          );
           return updatedEvents;
         });
+        toast.success("Event removed", {
+          position: toast.position,
+        });
       } else {
-        console.error("Failed to remove event");
+        toast.error("Failed to remove event", {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      console.error("Error removing event:", error);
+      toast.error("Error removing event", {
+        position: toast.position,
+      });
     }
   };
-
 
   return (
     <>
@@ -399,7 +426,9 @@ function Calendar() {
                                   borderRadius: "10px",
                                   color: "blue",
                                 }}
-                                onDoubleClick={() => handleRemoveEvent(date, event.id)}
+                                onDoubleClick={() =>
+                                  handleRemoveEvent(date, event.id)
+                                }
                               >
                                 {event.title}
                               </div>
@@ -471,7 +500,10 @@ function Calendar() {
           <h3 className="text-center mb-3">Events for {selectedDate}</h3>
           <div className="event-list">
             {filteredEvents.map((event, index) => (
-              <div key={event.id} className="event-item d-flex align-items-center">
+              <div
+                key={event.id}
+                className="event-item d-flex align-items-center"
+              >
                 <span className="event-text">{event.title}</span>
                 <button
                   className="btn btn-sm btn-danger ml-2"

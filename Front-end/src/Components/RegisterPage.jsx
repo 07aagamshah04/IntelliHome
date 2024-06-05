@@ -2,19 +2,20 @@ import "../colorlib-regform-17/colorlib-regform-17/fonts/material-design-iconic-
 import "../colorlib-regform-17/colorlib-regform-17/css/style.css";
 import image1 from "../colorlib-regform-17/colorlib-regform-17/images/image1.jpg";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import OtpInput from "./OtpInput";
 import { Link, useNavigate } from "react-router-dom";
 
 const RegistrationPage = () => {
   const [age, SetAge] = useState(0);
   const [emailChecker, SetEmailChecker] = useState(false);
+  const [email, setEmail] = useState("");
   const dob = useRef();
-  const email = useRef("");
-  const [Otp, Setotp] = useState(0);
   const uname = useRef("");
   const gender = useRef("");
   const pass1 = useRef("");
   const pass2 = useRef("");
+  const [Otp, Setotp] = useState(0);
   const navigate = useNavigate();
 
   function getQueryParam(param) {
@@ -42,19 +43,19 @@ const RegistrationPage = () => {
     if (
       dob.current.value === "" ||
       uname.current.value === "" ||
-      email.current.value === "" ||
+      email === "" ||
       gender.current.value === "" ||
       gender.current.value === "Gender" ||
       pass1.current.value === "" ||
       pass2.current.value === "" ||
       pass1.current.value !== pass2.current.value
     ) {
-      alert("WRONG INPUTS ENTERED OR FIELD IS MISSING OR PASSWORD INCORRECT");
+      alert("FIELD IS MISSING OR BOTH PASSWORDS ARE NOT MATCHING");
       return;
     }
 
     if (pass1.current.value.length !== 8) {
-      alert("PASSWORD MUST CONTAINS 8 DIGITS OR CHARACTERS");
+      alert("PASSWORD MUST CONTAIN 8 DIGITS OR CHARACTERS");
       return;
     }
 
@@ -69,10 +70,12 @@ const RegistrationPage = () => {
     } else {
       SetAge(age);
     }
+
     try {
       const emailData = {
-        email: email.current.value,
+        email: email,
       };
+      //Here we are checking whether user with same-id already exists
       const response = await fetch(
         "http://localhost:8000/api/users/verify-email",
         {
@@ -88,7 +91,7 @@ const RegistrationPage = () => {
         try {
           const emailData = {
             name: uname.current.value,
-            email: email.current.value,
+            email: email,
             otp: Otp,
           };
           const response = await fetch(
@@ -132,7 +135,7 @@ const RegistrationPage = () => {
       try {
         const formData = {
           userName: uname.current.value,
-          email: email.current.value,
+          email: email,
           gender: gender.current.value,
           dob: new Date(dob.current.value),
           password: pass1.current.value,
@@ -158,7 +161,7 @@ const RegistrationPage = () => {
         alert(errorData.msg);
       }
     } else {
-      alert("Wrong entered");
+      alert("Wrong OTP entered");
       return;
     }
   };
@@ -196,7 +199,8 @@ const RegistrationPage = () => {
           <div className="registration-form-wrapper">
             <input
               type="email"
-              ref={email}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Email Address"
               className="registration-form-control"
             />
@@ -246,7 +250,7 @@ const RegistrationPage = () => {
           </div>
           {emailChecker && (
             <div className="registration-form-wrapper">
-              <p>Enter OTP sent to {email.current.value}</p>
+              <p>Enter OTP sent to {email}</p>
               <OtpInput length={4} onOtpSubmit={onOtpSubmit} />
             </div>
           )}

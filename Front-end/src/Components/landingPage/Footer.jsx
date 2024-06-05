@@ -6,7 +6,6 @@ const Footer = () => {
       className="py-3"
       style={{
         backgroundColor: "#F8F9FA",
-        // position: "fixed",
         bottom: 0,
         left: 0,
         width: "100%",
@@ -90,13 +89,12 @@ const Footer = () => {
             </a>
           </li>
           <li className="nav-item" style={{ paddingRight: "20px" }}>
-            <a href="#" className="nav-link px-2 text-body-secondary">
+            <a href="#faq" className="nav-link px-2 text-body-secondary">
               FAQs
             </a>
           </li>
         </ul>
       </div>
-      {/* </div> */}
     </footer>
   );
 };
