@@ -1,34 +1,17 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import { useEffect, useReducer, useRef, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
+import { toast } from "react-toastify";
 
 const InviteMembers = ({ handleInviteToggle }) => {
   const [flag, setFlag] = useState(true);
   const [toggle, setToggle] = useState(false);
-  // const [email, setEmail] = useState("");
   const email = useRef("");
   const [emailChecker, SetEmailChecker] = useState(false);
-  // Function to handle input change
-  // const handleInputChange = (event) => {
-  //   setEmail(event.target.value);
-  //   // Check if the entered email contains "@gmail.com"
-  //   if (event.target.value.includes("@gmail.com")) {
-  //     // Do something when email contains "@gmail.com"
-  //     setFlag(true);
-  //   } else {
-  //     setFlag(false);
-  //   }
-  // };
+
   const invite_toggle = () => {
     setToggle(!toggle);
     handleInviteToggle(true); // Updates the state, but not immediately reflected
   };
-
-  // useEffect(() => {
-  //   handleInviteToggle(toggle); // Call your function with the updated value
-  // }, [toggle]); // Run this effect whenever invite state changes
 
   const handleclick = async (event) => {
     try {
@@ -48,15 +31,20 @@ const InviteMembers = ({ handleInviteToggle }) => {
         }
       );
       if (response.ok) {
-        alert("Invitation sent successfully");
+        toast.success("Invitation sent successfully", {
+          position: toast.position,
+        });
       } else {
         // console.log(error);
         const errorData = await response.json();
-        alert(errorData.message);
+        toast.error(errorData.message, {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      console.log(error);
-      alert("Email-id already exists");
+      toast.error("Email-id already exists", {
+        position: toast.position,
+      });
     }
   };
 
@@ -88,16 +76,11 @@ const InviteMembers = ({ handleInviteToggle }) => {
           current group members.
           <div style={{ width: "100%" }}>
             <input
-              //   className="text-center"
               type="email"
               required
-              // onChange={handleInputChange}
               ref={email}
               style={{
                 width: "100%",
-                // marginLeft: "10px",
-                // marginRight: "10px",
-                // textAlign: "center",
                 border: "none",
                 outline: "none",
                 borderBottom: "1px solid gray",
@@ -105,7 +88,13 @@ const InviteMembers = ({ handleInviteToggle }) => {
             />
           </div>
           <div className="d-flex justify-content-end" style={{ gap: "3.5rem" }}>
-            <button className="invitation-button" style={{ color: "blue" }}>
+            <button
+              className="invitation-button"
+              style={{ color: "blue" }}
+              onClick={() => {
+                email.current.value = "";
+              }}
+            >
               Cancel
             </button>
             <button

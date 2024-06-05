@@ -5,6 +5,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { RiDeleteBinLine } from "react-icons/ri";
 import InviteMembers from "./InviteMembers";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const MemberSection = () => {
   const [flag, setFlag] = useState(true);
@@ -22,10 +23,9 @@ const MemberSection = () => {
   ];
   const delbtnMessage = ["Delete family group", "Leave family group"];
   const [invitation, setInvitation] = useState(false);
+
   function handleInvitation(invite) {
     setInvitation(invite);
-    // console.log("Jaimin");
-    console.log(invite);
   }
   function handleGroupClick({
     username,
@@ -46,8 +46,6 @@ const MemberSection = () => {
     setrole(role);
     setlogo(logo);
     setprofileLogoColor(profileLogoColor);
-    // console.log(user);
-    // console.log(email);
     if (user === email || userRole === "Family Manager") {
       setFlag(false);
     } else {
@@ -81,13 +79,15 @@ const MemberSection = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete member");
+        toast.error("Failed to delete member", {
+          position: toast.position,
+        });
       } else {
         const data = await response.json();
-        alert("Member deleted successfully:");
-        // Handle success, e.g., update UI or notify user
+        toast.success("Member deleted successfully", {
+          position: toast.position,
+        });
         try {
-          //When deployed API change it
           const response = await fetch("http://localhost:8000/api/logout", {
             method: "POST",
             headers: {
@@ -98,15 +98,20 @@ const MemberSection = () => {
           if (response.ok) {
             window.location.href = "/";
           } else {
-            alert("Error in logout");
+            toast.error("Error in Logout", {
+              position: toast.position,
+            });
           }
         } catch (error) {
-          alert("Error in logout");
+          toast.error("Error in Logout", {
+            position: toast.position,
+          });
         }
       }
     } catch (error) {
-      console.error("Error:", error);
-      // Handle error, e.g., show error message to user
+      toast.error("Failed to delete member", {
+        position: toast.position,
+      });
     }
   };
 

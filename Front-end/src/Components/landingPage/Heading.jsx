@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 const Heading = ({ head, body, image }) => {
   return (
     <>
