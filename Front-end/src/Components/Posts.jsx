@@ -1,9 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "../Modules/Posts.module.css";
 import PostCard from "./PostCard";
 import Loader from "./Loader"; // Import the Loader component
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Posts = () => {
   const [showModal, setShowModal] = useState(false);
@@ -48,20 +51,33 @@ const Posts = () => {
               credentials: "include",
             }
           );
-          const data = await postsResponse.json();
-          console.log(data);
-          if (Array.isArray(data)) {
-            setPosts(data);
+          if (postsResponse.status === 401) {
+            toast.error("You are Unauthorized!!! Kindly SignIn or Register", {
+              position: "top-right",
+            });
+            setTimeout(() => {
+              window.location.href = "/sign-in";
+            }, 3000);
           } else {
-            console.error("Fetched data is not an array:", data);
+            const data = await postsResponse.json();
+            if (Array.isArray(data)) {
+              setPosts(data);
+            } else {
+              toast.error("Fetched data is not an array", {
+                position: "top-right",
+              });
+            }
           }
         } else {
           const errorData = await authResponse.json();
-          alert(errorData.msg);
+          toast.error(errorData.msg, {
+            position: "top-right",
+          });
         }
       } catch (error) {
-        console.error("Error fetching posts:", error);
-        alert("Error fetching the data");
+        toast.error("Error fetching posts", {
+          position: "top-right",
+        });
       }
       setLoading(false); // Set loading to false when fetching is done
     };
@@ -85,7 +101,9 @@ const Posts = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (postTitle === "" || postText === "" || selectedFiles.length === 0) {
-      setErrorMessage("*Every field is required");
+      toast.error("Every field is required", {
+        position: "top-right",
+      });
       return;
     }
 
@@ -125,7 +143,9 @@ const Posts = () => {
         );
 
         if (postResponse.ok) {
-          alert("Your Post has been posted");
+          toast.success("Your Post has been posted", {
+            position: "top-right",
+          });
           const updatedResponse = await fetch(
             "http://localhost:8000/api/blogs/posts",
             {
@@ -140,18 +160,26 @@ const Posts = () => {
           if (Array.isArray(data)) {
             setPosts(data);
           } else {
-            console.error("Fetched data is not an array:", data);
+            toast.error("Error fetching the updated posts", {
+              position: "top-right",
+            });
           }
         } else {
           const errorData = await postResponse.json();
-          alert(errorData.msg);
+          toast.error(errorData.msg, {
+            position: "top-right",
+          });
         }
       } else {
         const errorData = await authResponse.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: "top-right",
+        });
       }
     } catch (error) {
-      console.error("Error adding post:", error);
+      toast.error("Error adding post", {
+        position: "top-right",
+      });
     }
 
     setPostTitle("");
@@ -170,14 +198,20 @@ const Posts = () => {
       );
 
       if (response.ok) {
-        alert("Post deleted successfully");
+        toast.success("Post deleted successfully", {
+          position: "top-right",
+        });
         setPosts(posts.filter((post) => post._id !== id));
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: "top-right",
+        });
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      toast.error("Error deleting post", {
+        position: "top-right",
+      });
     }
   };
 

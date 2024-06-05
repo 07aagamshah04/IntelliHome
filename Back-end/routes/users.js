@@ -19,8 +19,6 @@ const {
   deleteMarksheet,
   deleteVoterId,
   deletePan,
-  // putPost,
-  // getPost,
 } = require("../controllers/users");
 
 const router = express.Router();
@@ -49,8 +47,6 @@ router.route("/license").get(getLicense);
 router.route("/license/:id").delete(deleteLicense);
 
 router.route("/members-token-verify").post(verifyMemeber);
-
-// router.route("/posts").post(putPost).get(getPost);
 
 router
   .route("/:id")

@@ -1,9 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import image from "../../assets/text-logo.png";
-import SignInPage from "../SignInPage";
-import RegistrationPage from "../RegisterPage";
 const OverviewNavbar = () => {
   const [select, SetSelect] = useState("Overview");
 
@@ -14,7 +11,7 @@ const OverviewNavbar = () => {
         aria-label="Offcanvas navbar large"
       >
         <div className="container-fluid">
-          <img src={image} alt="" className="intelli-logo"/>
+          <img src={image} alt="" className="intelli-logo" />
           <button
             className="navbar-toggler"
             type="button"
@@ -23,10 +20,7 @@ const OverviewNavbar = () => {
             aria-controls="offcanvasNavbar2"
             aria-label="Toggle navigation"
           >
-            <span
-              className="navbar-toggler-icon"
-              // style={{ color: "black" }}
-            ></span>
+            <span className="navbar-toggler-icon"></span>
           </button>
           <div
             className="offcanvas offcanvas-end text-bg-white"

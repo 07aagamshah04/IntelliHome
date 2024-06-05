@@ -37,10 +37,14 @@ const Navbar = () => {
       if (response.ok) {
         window.location.href = "/";
       } else {
-        alert("Error in logout");
+        toast.error("Error in Logout", {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      alert("Error in logout");
+      toast.error("Error in Logout", {
+        position: toast.position,
+      });
     }
   };
 

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import "./ChangingTextAnimation.css"; // Import CSS file for styling
 
 const OverView = () => {
   const dynamicWords = [" grow", " play", " learn"];

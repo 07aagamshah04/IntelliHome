@@ -218,11 +218,9 @@ async function sendEmail(req, res) {
   };
 
   try {
-    // Send email
     await transporter.sendMail(mailOptions);
     res.status(200).send("Email sent successfully");
   } catch (error) {
-    // console.error("Error:", error);
     res.status(500).send("Error sending email");
   }
 }
@@ -257,7 +255,6 @@ async function addFiles(req, res) {
       }
       return res.status(200).json({ message: "Data Added" });
     } catch (error) {
-      console.error("Error:", error);
       res.status(500).json({ msg: "Error" });
     }
   } else if (folderName === "PAN CARD") {
@@ -273,7 +270,6 @@ async function addFiles(req, res) {
       }
       return res.status(200).json({ message: "Data Added" });
     } catch (error) {
-      console.error("Error:", error);
       res.status(500).json({ msg: "Error" });
     }
   } else if (folderName === "LICENSE") {
@@ -289,7 +285,6 @@ async function addFiles(req, res) {
       }
       return res.status(200).json({ message: "Data Added" });
     } catch (error) {
-      console.error("Error:", error);
       res.status(500).json({ msg: "Error" });
     }
   } else if (folderName === "VOTER ID") {
@@ -305,7 +300,6 @@ async function addFiles(req, res) {
       }
       return res.status(200).json({ message: "Data Added" });
     } catch (error) {
-      console.error("Error:", error);
       res.status(500).json({ msg: "Error" });
     }
   } else {
@@ -321,7 +315,6 @@ async function addFiles(req, res) {
       }
       return res.status(200).json({ message: "Data Added" });
     } catch (error) {
-      console.error("Error:", error);
       res.status(500).json({ msg: "Error" });
     }
   }
@@ -329,14 +322,15 @@ async function addFiles(req, res) {
 
 async function getAadhar(req, res) {
   try {
-    // console.log(req.user);
+    if (!req.user) {
+      return res.status(401).json({ message: "UnAuthorized" });
+    }
     const familyId = req.user.familyId; // Assuming req.user.familyId is available
 
     const files = await Aadhar.find({ createdBy: familyId });
 
     return res.status(200).json(files);
   } catch (error) {
-    console.error("Error fetching Aadhar data:", error);
     return res.status(500).json({ msg: "Error fetching data" });
   }
 }
@@ -349,7 +343,6 @@ async function getPan(req, res) {
 
     return res.status(200).json(files);
   } catch (error) {
-    console.error("Error fetching Aadhar data:", error);
     return res.status(500).json({ msg: "Error fetching data" });
   }
 }
@@ -362,14 +355,12 @@ async function getVoterId(req, res) {
 
     return res.status(200).json(files);
   } catch (error) {
-    console.error("Error fetching Aadhar data:", error);
     return res.status(500).json({ msg: "Error fetching data" });
   }
 }
 
 async function verifyMemeber(req, res) {
-  // console.log(req.user.familyId);
-  return res.status(200).json({ mwssage: "Done" });
+  return res.status(200).json({ message: "Done" });
 }
 
 async function getMarkSheet(req, res) {
@@ -380,7 +371,6 @@ async function getMarkSheet(req, res) {
 
     return res.status(200).json(files);
   } catch (error) {
-    console.error("Error fetching Aadhar data:", error);
     return res.status(500).json({ msg: "Error fetching data" });
   }
 }
@@ -393,7 +383,6 @@ async function getLicense(req, res) {
 
     return res.status(200).json(files);
   } catch (error) {
-    console.error("Error fetching Aadhar data:", error);
     return res.status(500).json({ msg: "Error fetching data" });
   }
 }
@@ -467,6 +456,4 @@ module.exports = {
   deleteMarksheet,
   deleteVoterId,
   deletePan,
-  // putPost,
-  // getPost,
 };

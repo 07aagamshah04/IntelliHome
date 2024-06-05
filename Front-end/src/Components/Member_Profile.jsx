@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
+import { toast } from "react-toastify";
 
 const profileLogoColors = [
   "#2E8B57", // Sea Green
@@ -25,10 +24,8 @@ const MemberProfile = ({
   const [flag, setFlag] = useState(true);
   const [profileLogoColor, setprofileLogoColor] = useState("");
   const handleClick = () => {
-    console.log("Clicked....");
     const color = profileLogoColors[index]; // Access the color from the array
     setprofileLogoColor(color); // Set the profile logo color
-    console.log(color);
     handleGroupClick({
       username,
       logo,
@@ -37,8 +34,7 @@ const MemberProfile = ({
       user,
       userRole,
       profileLogoColor: color,
-    }); // Pass the color to the handleGroupClick function
-    // setFlag(!flag); // Toggle flag
+    });
   };
 
   return (

@@ -20,15 +20,14 @@ import { BsTrash } from "react-icons/bs";
 import { CiFolderOn } from "react-icons/ci";
 import { TbCircleArrowDownFilled } from "react-icons/tb";
 import "../Modules/AddSubmiision.module.css";
+import { toast } from "react-toastify";
 import Loader from "./Loader";
 
 const AddSubmiision = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [folderName, setFolderName] = useState("AADHAR CARD");
-  // const [currFolderName, setCurrFolderName] = useState("");
   const [droppedFiles, setDroppedFiles] = useState([]);
-  // const [files, setFiles] = useState([]);
   const [aadhar, setAadhar] = useState([]);
   const [pan, setPan] = useState([]);
   const [license, setLicense] = useState([]);
@@ -36,7 +35,6 @@ const AddSubmiision = () => {
   const [marksheet, SetMarksheet] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  // const[toggleState] = useState(1);
   const inputFile = useRef(null);
   const [loading, setLoading] = useState(false); // Add a loading state
 
@@ -59,7 +57,10 @@ const AddSubmiision = () => {
           }
         );
         if (!response.ok) {
-          throw new Error("Error fetching Aadhar data");
+          toast.error("Unauthorized Access", {
+            position: toast.position,
+          });
+          return;
         }
         const aadharResponse = await fetch(
           "http://localhost:8000/api/users/aadhar",
@@ -73,7 +74,20 @@ const AddSubmiision = () => {
         );
 
         if (!aadharResponse.ok) {
-          throw new Error("Error fetching Aadhar data");
+          if (aadharResponse.status == 401) {
+            toast.error("You are Unauthorized!!! Kindly SignIn or Register", {
+              position: toast.position,
+            });
+            setTimeout(() => {
+              window.location.href = "/sign-in";
+            }, 3000);
+            return;
+          } else {
+            toast.error("Error fetching Aadhar data", {
+              position: toast.position,
+            });
+            return;
+          }
         }
 
         const aadharData = await aadharResponse.json();
@@ -89,7 +103,10 @@ const AddSubmiision = () => {
         });
 
         if (!panResponse.ok) {
-          throw new Error("Error fetching Pan data");
+          toast.error("Error fetching pan data", {
+            position: toast.position,
+          });
+          return;
         }
 
         const panData = await panResponse.json();
@@ -108,7 +125,10 @@ const AddSubmiision = () => {
         );
 
         if (!voterIdResponse.ok) {
-          throw new Error("Error fetching Voter ID data");
+          toast.error("Error fetching voterid data", {
+            position: toast.position,
+          });
+          return;
         }
 
         const voteridData = await voterIdResponse.json();
@@ -127,7 +147,10 @@ const AddSubmiision = () => {
         );
 
         if (!markSheetResponse.ok) {
-          throw new Error("Error fetching Marksheet data");
+          toast.error("Error fetching marksheet data", {
+            position: toast.position,
+          });
+          return;
         }
 
         const marksheetData = await markSheetResponse.json();
@@ -146,22 +169,25 @@ const AddSubmiision = () => {
         );
 
         if (!licenseResponse.ok) {
-          throw new Error("Error fetching License data");
+          toast.error("Error fetching license data", {
+            position: toast.position,
+          });
+          return;
         }
 
         const licenseData = await licenseResponse.json();
 
         setLicense(licenseData);
       } catch (err) {
-        console.error("Error fetching document data:", err);
-        // setError(err.message);
-        // setLoading(false);
+        toast.error("Error fetching license data", {
+          position: toast.position,
+        });
+        return;
       }
       setLoading(false);
     };
 
     fetchData();
-    console.log("done");
   }, []);
 
   //Functions for POP-OP
@@ -173,9 +199,11 @@ const AddSubmiision = () => {
         folderName
       )
     ) {
-      setErrorMessage("PLEASE ENTER A VALID FOLDER NAME!!");
+      toast.error("PLEASE ENTER A VALID FOLDER NAME!!", {
+        position: toast.position,
+      });
+      return;
     } else {
-      // console.log(folderName);
       setShowModal(false);
     }
   };
@@ -261,7 +289,9 @@ const AddSubmiision = () => {
 
     const totalFiles = droppedFilees.length + droppedFiles.length;
     if (totalFiles > 5) {
-      alert("Cannot have more than 5 files in one folder");
+      toast.error("Cannot have more than 5 files in one folder", {
+        position: toast.position,
+      });
       return;
     }
 
@@ -299,12 +329,16 @@ const AddSubmiision = () => {
         folderName
       )
     ) {
-      alert("Kindly Enter The Folder Name!!");
+      toast.error("Kindly Enter The Folder Name!!", {
+        position: toast.position,
+      });
+      return;
     } else {
       if (folderName === "AADHAR CARD") {
         if (droppedFiles.length + aadhar.length > 5) {
-          alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
-          return;
+          toast.error("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER", {
+            position: toast.position,
+          });
         } else {
           try {
             const fileDataArray = await Promise.all(
@@ -336,18 +370,25 @@ const AddSubmiision = () => {
               }
             );
             if (!response.ok) {
-              throw new Error("Network response was not ok");
+              toast.error("Network response was not ok", {
+                position: toast.position,
+              });
             }
             const responseData = await response.json();
-            alert(responseData.message);
+            toast.success("File added successfully", {
+              position: toast.position,
+            });
           } catch (error) {
-            console.error("Error storing files in the database:", error);
+            toast.error("Error storing files in the database!!", {
+              position: toast.position,
+            });
           }
         }
       } else if (folderName === "PAN CARD") {
         if (droppedFiles.length + pan.length > 5) {
-          alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
-          return;
+          toast.error("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER", {
+            position: toast.position,
+          });
         } else {
           try {
             const fileDataArray = await Promise.all(
@@ -379,18 +420,27 @@ const AddSubmiision = () => {
               }
             );
             if (!response.ok) {
-              throw new Error("Network response was not ok");
+              toast.error("Network response was not ok", {
+                position: toast.position,
+              });
             }
             const responseData = await response.json();
-            alert(responseData.message);
+            toast.success("File added", {
+              position: toast.position,
+            });
+            return;
           } catch (error) {
-            console.error("Error storing files in the database:", error);
+            toast.error("Error storing files in the database", {
+              position: toast.position,
+            });
+            return;
           }
         }
       } else if (folderName === "LICENSE") {
         if (droppedFiles.length + license.length > 5) {
-          alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
-          return;
+          toast.error("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER", {
+            position: toast.position,
+          });
         } else {
           try {
             const fileDataArray = await Promise.all(
@@ -422,18 +472,25 @@ const AddSubmiision = () => {
               }
             );
             if (!response.ok) {
-              throw new Error("Network response was not ok");
+              toast.error("Network response was not ok", {
+                position: toast.position,
+              });
             }
             const responseData = await response.json();
-            alert(responseData.message);
+            toast.success("Data added", {
+              position: toast.position,
+            });
           } catch (error) {
-            console.error("Error storing files in the database:", error);
+            toast.error("Error storing files in the database", {
+              position: toast.position,
+            });
           }
         }
       } else if (folderName === "VOTER ID") {
         if (droppedFiles.length + voterid.length > 5) {
-          alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
-          return;
+          toast.error("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER", {
+            position: toast.position,
+          });
         } else {
           try {
             const fileDataArray = await Promise.all(
@@ -465,18 +522,25 @@ const AddSubmiision = () => {
               }
             );
             if (!response.ok) {
-              throw new Error("Network response was not ok");
+              toast.error("Network response was not ok", {
+                position: toast.position,
+              });
             }
             const responseData = await response.json();
-            alert(responseData.message);
+            toast.success("Data Added", {
+              position: toast.position,
+            });
           } catch (error) {
-            console.error("Error storing files in the database:", error);
+            toast.error("Error storing files in the database", {
+              position: toast.position,
+            });
           }
         }
       } else {
         if (droppedFiles.length + marksheet.length > 5) {
-          alert("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER");
-          return;
+          toast.error("CANNOT HAVE MORE THAN 5 FILES IN ONE FOLDER", {
+            position: toast.position,
+          });
         } else {
           try {
             const fileDataArray = await Promise.all(
@@ -508,12 +572,18 @@ const AddSubmiision = () => {
               }
             );
             if (!response.ok) {
-              throw new Error("Network response was not ok");
+              toast.error("Network response was not ok", {
+                position: toast.position,
+              });
             }
             const responseData = await response.json();
-            alert(responseData.message);
+            toast.success("Data Added", {
+              position: toast.position,
+            });
           } catch (error) {
-            console.error("Error storing files in the database:", error);
+            toast.error("Error storing files in the database", {
+              position: toast.position,
+            });
           }
         }
       }
@@ -534,15 +604,20 @@ const AddSubmiision = () => {
       );
 
       if (response.ok) {
-        alert("Data deleted successfully");
-        // setPosts(posts.filter((post) => post._id !== id));
+        toast.success("Data deleted successfully", {
+          position: toast.position,
+        });
         setAadhar(aadhar.filter((item) => item._id !== id));
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      toast.error("Error in deleting post", {
+        position: toast.position,
+      });
     }
   };
   const handleDeletePan = async (id) => {
@@ -555,15 +630,20 @@ const AddSubmiision = () => {
       );
 
       if (response.ok) {
-        alert("Data deleted successfully");
-        // setPosts(posts.filter((post) => post._id !== id));
-        setPan(aadhar.filter((item) => item._id !== id));
+        toast.success("Data deleted successfully", {
+          position: toast.position,
+        });
+        setPan(pan.filter((item) => item._id !== id));
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      toast.error("Error deleting post", {
+        position: toast.position,
+      });
     }
   };
   const handleDeleteVoterId = async (id) => {
@@ -576,15 +656,20 @@ const AddSubmiision = () => {
       );
 
       if (response.ok) {
-        alert("Data deleted successfully");
-        // setPosts(posts.filter((post) => post._id !== id));
-        setVoterId(aadhar.filter((item) => item._id !== id));
+        toast.success("Data deleted successfully", {
+          position: toast.position,
+        });
+        setVoterId(voterid.filter((item) => item._id !== id));
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      toast.error("Error deleting post", {
+        position: toast.position,
+      });
     }
   };
   const handleDeleteLicense = async (id) => {
@@ -597,15 +682,20 @@ const AddSubmiision = () => {
       );
 
       if (response.ok) {
-        alert("Data deleted successfully");
-        // setPosts(posts.filter((post) => post._id !== id));
-        setLicense(aadhar.filter((item) => item._id !== id));
+        setLicense(license.filter((item) => item._id !== id));
+        toast.success("Data deleted successfully", {
+          position: toast.position,
+        });
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      toast.error("Error deleting post", {
+        position: toast.position,
+      });
     }
   };
   const handleDeleteMarksheet = async (id) => {
@@ -618,15 +708,20 @@ const AddSubmiision = () => {
       );
 
       if (response.ok) {
-        alert("Data deleted successfully");
-        // setPosts(posts.filter((post) => post._id !== id));
-        SetMarksheet(aadhar.filter((item) => item._id !== id));
+        SetMarksheet(marksheet.filter((item) => item._id !== id));
+        toast.success("Data deleted successfully", {
+          position: toast.position,
+        });
       } else {
         const errorData = await response.json();
-        alert(errorData.msg);
+        toast.error(errorData.msg, {
+          position: toast.position,
+        });
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      toast.error("Error deleting post", {
+        position: toast.position,
+      });
     }
   };
 
@@ -674,62 +769,66 @@ const AddSubmiision = () => {
                     title="AADHAR CARD"
                     style={{ border: "2px solid whitesmoke" }}
                   >
-                    {aadhar.map((file, index) => {
-                      const blob = base64ToBlob(file.file, file.type);
-                      const url = URL.createObjectURL(blob);
+                    {aadhar.length !== 0 &&
+                      aadhar.map((file, index) => {
+                        const blob = base64ToBlob(file.file, file.type);
+                        const url = URL.createObjectURL(blob);
 
-                      return (
-                        <div
-                          key={file._id}
-                          className="document-section"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: "10px",
-                            marginLeft: "10px",
-                            marginTop: "5px",
-                            color: "grey",
-                          }}
-                        >
-                          <CiFolderOn
-                            className="document-folder-icon"
-                            title="file"
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <span
-                            title="Click to open file"
+                        return (
+                          <div
+                            key={file._id}
+                            className="document-section"
                             style={{
-                              flex: 1,
-                              width: "20%",
-                              overflow: "hidden",
-                              // overflowX:"scroll",
-                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: "10px",
+                              marginLeft: "10px",
+                              marginTop: "5px",
+                              color: "grey",
                             }}
-                            onClick={() => handleItemClick(file)}
                           >
-                            {file.filename}
-                          </span>
-                          <span
-                            className="document-file-size"
-                            title="file size in KB"
-                            style={{ marginRight: "10px" }}
-                          >{`${file.size}B`}</span>
-                          <BsTrash
-                            className="document-trash-icon"
-                            title="Delete"
-                            onClick={() => handleDeleteAadhar(file._id)}
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <a href={url} download={file.filename}>
-                            <BsDownload
-                              className="document-delete-icon"
-                              title="Download"
+                            <CiFolderOn
+                              className="document-folder-icon"
+                              title="file"
                               style={{ cursor: "pointer", marginRight: "10px" }}
                             />
-                          </a>
-                        </div>
-                      );
-                    })}
+                            <span
+                              title="Click to open file"
+                              style={{
+                                flex: 1,
+                                width: "20%",
+                                overflow: "hidden",
+                                // overflowX:"scroll",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => handleItemClick(file)}
+                            >
+                              {file.filename}
+                            </span>
+                            <span
+                              className="document-file-size"
+                              title="file size in KB"
+                              style={{ marginRight: "10px" }}
+                            >{`${file.size}B`}</span>
+                            <BsTrash
+                              className="document-trash-icon"
+                              title="Delete"
+                              onClick={() => handleDeleteAadhar(file._id)}
+                              style={{ cursor: "pointer", marginRight: "10px" }}
+                            />
+                            <a href={url} download={file.filename}>
+                              <BsDownload
+                                className="document-delete-icon"
+                                title="Download"
+                                style={{
+                                  cursor: "pointer",
+                                  marginRight: "10px",
+                                }}
+                              />
+                            </a>
+                          </div>
+                        );
+                      })}
                     {aadhar.length === 0 && (
                       <p
                         style={{
@@ -748,61 +847,65 @@ const AddSubmiision = () => {
                     title="PAN CARD"
                     style={{ border: "2px solid whitesmoke" }}
                   >
-                    {pan.map((file, index) => {
-                      const blob = base64ToBlob(file.file, file.type);
-                      const url = URL.createObjectURL(blob);
+                    {pan.length !== 0 &&
+                      pan.map((file, index) => {
+                        const blob = base64ToBlob(file.file, file.type);
+                        const url = URL.createObjectURL(blob);
 
-                      return (
-                        <div
-                          key={file._id}
-                          className="document-section"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: "10px",
-                            marginLeft: "10px",
-                            marginTop: "5px",
-                            color: "grey",
-                          }}
-                        >
-                          <CiFolderOn
-                            className="document-folder-icon"
-                            title="file"
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <span
-                            title="Click to open file"
+                        return (
+                          <div
+                            key={file._id}
+                            className="document-section"
                             style={{
-                              flex: 1,
-                              cursor: "pointer",
-                              width: "20%",
-                              overflow: "hidden",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: "10px",
+                              marginLeft: "10px",
+                              marginTop: "5px",
+                              color: "grey",
                             }}
-                            onClick={() => handleItemClick(file)}
                           >
-                            {file.filename}
-                          </span>
-                          <span
-                            className="document-file-size"
-                            title="file size in KB"
-                            style={{ marginRight: "10px" }}
-                          >{`${file.size}B`}</span>
-                          <BsTrash
-                            className="document-trash-icon"
-                            title="Delete"
-                            onClick={() => handleDeletePan(file._id)}
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <a href={url} download={file.filename}>
-                            <BsDownload
-                              className="document-delete-icon"
-                              title="Download"
+                            <CiFolderOn
+                              className="document-folder-icon"
+                              title="file"
                               style={{ cursor: "pointer", marginRight: "10px" }}
                             />
-                          </a>
-                        </div>
-                      );
-                    })}
+                            <span
+                              title="Click to open file"
+                              style={{
+                                flex: 1,
+                                cursor: "pointer",
+                                width: "20%",
+                                overflow: "hidden",
+                              }}
+                              onClick={() => handleItemClick(file)}
+                            >
+                              {file.filename}
+                            </span>
+                            <span
+                              className="document-file-size"
+                              title="file size in KB"
+                              style={{ marginRight: "10px" }}
+                            >{`${file.size}B`}</span>
+                            <BsTrash
+                              className="document-trash-icon"
+                              title="Delete"
+                              onClick={() => handleDeletePan(file._id)}
+                              style={{ cursor: "pointer", marginRight: "10px" }}
+                            />
+                            <a href={url} download={file.filename}>
+                              <BsDownload
+                                className="document-delete-icon"
+                                title="Download"
+                                style={{
+                                  cursor: "pointer",
+                                  marginRight: "10px",
+                                }}
+                              />
+                            </a>
+                          </div>
+                        );
+                      })}
                     {pan.length === 0 && (
                       <p
                         style={{
@@ -822,61 +925,65 @@ const AddSubmiision = () => {
                     title="LICENSE"
                     style={{ border: "2px solid whitesmoke" }}
                   >
-                    {license.map((file, index) => {
-                      const blob = base64ToBlob(file.file, file.type);
-                      const url = URL.createObjectURL(blob);
+                    {license.length !== 0 &&
+                      license.map((file, index) => {
+                        const blob = base64ToBlob(file.file, file.type);
+                        const url = URL.createObjectURL(blob);
 
-                      return (
-                        <div
-                          key={file._id}
-                          className="document-section"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: "10px",
-                            marginLeft: "10px",
-                            marginTop: "5px",
-                            color: "grey",
-                          }}
-                        >
-                          <CiFolderOn
-                            className="document-folder-icon"
-                            title="file"
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <span
-                            title="Click to open file"
+                        return (
+                          <div
+                            key={file._id}
+                            className="document-section"
                             style={{
-                              flex: 1,
-                              cursor: "pointer",
-                              width: "20%",
-                              overflow: "hidden",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: "10px",
+                              marginLeft: "10px",
+                              marginTop: "5px",
+                              color: "grey",
                             }}
-                            onClick={() => handleItemClick(file)}
                           >
-                            {file.filename}
-                          </span>
-                          <span
-                            className="document-file-size"
-                            title="file size in KB"
-                            style={{ marginRight: "10px" }}
-                          >{`${file.size}B`}</span>
-                          <BsTrash
-                            className="document-trash-icon"
-                            title="Delete"
-                            onClick={() => handleDeleteLicense(file._id)}
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <a href={url} download={file.filename}>
-                            <BsDownload
-                              className="document-delete-icon"
-                              title="Download"
+                            <CiFolderOn
+                              className="document-folder-icon"
+                              title="file"
                               style={{ cursor: "pointer", marginRight: "10px" }}
                             />
-                          </a>
-                        </div>
-                      );
-                    })}
+                            <span
+                              title="Click to open file"
+                              style={{
+                                flex: 1,
+                                cursor: "pointer",
+                                width: "20%",
+                                overflow: "hidden",
+                              }}
+                              onClick={() => handleItemClick(file)}
+                            >
+                              {file.filename}
+                            </span>
+                            <span
+                              className="document-file-size"
+                              title="file size in KB"
+                              style={{ marginRight: "10px" }}
+                            >{`${file.size}B`}</span>
+                            <BsTrash
+                              className="document-trash-icon"
+                              title="Delete"
+                              onClick={() => handleDeleteLicense(file._id)}
+                              style={{ cursor: "pointer", marginRight: "10px" }}
+                            />
+                            <a href={url} download={file.filename}>
+                              <BsDownload
+                                className="document-delete-icon"
+                                title="Download"
+                                style={{
+                                  cursor: "pointer",
+                                  marginRight: "10px",
+                                }}
+                              />
+                            </a>
+                          </div>
+                        );
+                      })}
                     {license.length === 0 && (
                       <p
                         style={{
@@ -896,61 +1003,65 @@ const AddSubmiision = () => {
                     title="VOTER ID"
                     style={{ border: "2px solid whitesmoke" }}
                   >
-                    {voterid.map((file, index) => {
-                      const blob = base64ToBlob(file.file, file.type);
-                      const url = URL.createObjectURL(blob);
+                    {voterid.length !== 0 &&
+                      voterid.map((file, index) => {
+                        const blob = base64ToBlob(file.file, file.type);
+                        const url = URL.createObjectURL(blob);
 
-                      return (
-                        <div
-                          key={file._id}
-                          className="document-section"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: "10px",
-                            marginLeft: "10px",
-                            marginTop: "5px",
-                            color: "grey",
-                          }}
-                        >
-                          <CiFolderOn
-                            className="document-folder-icon"
-                            title="file"
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <span
-                            title="Click to open file"
+                        return (
+                          <div
+                            key={file._id}
+                            className="document-section"
                             style={{
-                              flex: 1,
-                              cursor: "pointer",
-                              width: "20%",
-                              overflow: "hidden",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: "10px",
+                              marginLeft: "10px",
+                              marginTop: "5px",
+                              color: "grey",
                             }}
-                            onClick={() => handleItemClick(file)}
                           >
-                            {file.filename}
-                          </span>
-                          <span
-                            className="document-file-size"
-                            title="file size in KB"
-                            style={{ marginRight: "10px" }}
-                          >{`${file.size}B`}</span>
-                          <BsTrash
-                            className="document-trash-icon"
-                            title="Delete"
-                            onClick={() => handleDeleteVoterId(file._id)}
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <a href={url} download={file.filename}>
-                            <BsDownload
-                              className="document-delete-icon"
-                              title="Download"
+                            <CiFolderOn
+                              className="document-folder-icon"
+                              title="file"
                               style={{ cursor: "pointer", marginRight: "10px" }}
                             />
-                          </a>
-                        </div>
-                      );
-                    })}
+                            <span
+                              title="Click to open file"
+                              style={{
+                                flex: 1,
+                                cursor: "pointer",
+                                width: "20%",
+                                overflow: "hidden",
+                              }}
+                              onClick={() => handleItemClick(file)}
+                            >
+                              {file.filename}
+                            </span>
+                            <span
+                              className="document-file-size"
+                              title="file size in KB"
+                              style={{ marginRight: "10px" }}
+                            >{`${file.size}B`}</span>
+                            <BsTrash
+                              className="document-trash-icon"
+                              title="Delete"
+                              onClick={() => handleDeleteVoterId(file._id)}
+                              style={{ cursor: "pointer", marginRight: "10px" }}
+                            />
+                            <a href={url} download={file.filename}>
+                              <BsDownload
+                                className="document-delete-icon"
+                                title="Download"
+                                style={{
+                                  cursor: "pointer",
+                                  marginRight: "10px",
+                                }}
+                              />
+                            </a>
+                          </div>
+                        );
+                      })}
                     {voterid.length === 0 && (
                       <p
                         style={{
@@ -970,61 +1081,65 @@ const AddSubmiision = () => {
                     title="MARKSHEET"
                     style={{ border: "2px solid whitesmoke" }}
                   >
-                    {marksheet.map((file, index) => {
-                      const blob = base64ToBlob(file.file, file.type);
-                      const url = URL.createObjectURL(blob);
+                    {marksheet.length !== 0 &&
+                      marksheet.map((file, index) => {
+                        const blob = base64ToBlob(file.file, file.type);
+                        const url = URL.createObjectURL(blob);
 
-                      return (
-                        <div
-                          key={file._id}
-                          className="document-section"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: "10px",
-                            marginLeft: "10px",
-                            marginTop: "5px",
-                            color: "grey",
-                          }}
-                        >
-                          <CiFolderOn
-                            className="document-folder-icon"
-                            title="file"
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <span
-                            title="Click to open file"
+                        return (
+                          <div
+                            key={file._id}
+                            className="document-section"
                             style={{
-                              flex: 1,
-                              cursor: "pointer",
-                              width: "20%",
-                              overflow: "hidden",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: "10px",
+                              marginLeft: "10px",
+                              marginTop: "5px",
+                              color: "grey",
                             }}
-                            onClick={() => handleItemClick(file)}
                           >
-                            {file.filename}
-                          </span>
-                          <span
-                            className="document-file-size"
-                            title="file size in KB"
-                            style={{ marginRight: "10px" }}
-                          >{`${file.size}B`}</span>
-                          <BsTrash
-                            className="document-trash-icon"
-                            title="Delete"
-                            onClick={() => handleDeleteMarksheet(file._id)}
-                            style={{ cursor: "pointer", marginRight: "10px" }}
-                          />
-                          <a href={url} download={file.filename}>
-                            <BsDownload
-                              className="document-delete-icon"
-                              title="Download"
+                            <CiFolderOn
+                              className="document-folder-icon"
+                              title="file"
                               style={{ cursor: "pointer", marginRight: "10px" }}
                             />
-                          </a>
-                        </div>
-                      );
-                    })}
+                            <span
+                              title="Click to open file"
+                              style={{
+                                flex: 1,
+                                cursor: "pointer",
+                                width: "20%",
+                                overflow: "hidden",
+                              }}
+                              onClick={() => handleItemClick(file)}
+                            >
+                              {file.filename}
+                            </span>
+                            <span
+                              className="document-file-size"
+                              title="file size in KB"
+                              style={{ marginRight: "10px" }}
+                            >{`${file.size}B`}</span>
+                            <BsTrash
+                              className="document-trash-icon"
+                              title="Delete"
+                              onClick={() => handleDeleteMarksheet(file._id)}
+                              style={{ cursor: "pointer", marginRight: "10px" }}
+                            />
+                            <a href={url} download={file.filename}>
+                              <BsDownload
+                                className="document-delete-icon"
+                                title="Download"
+                                style={{
+                                  cursor: "pointer",
+                                  marginRight: "10px",
+                                }}
+                              />
+                            </a>
+                          </div>
+                        );
+                      })}
                     {marksheet.length === 0 && (
                       <p
                         style={{

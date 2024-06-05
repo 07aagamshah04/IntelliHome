@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 const ServiceCard = ({ heading, imageUrl }) => {
   return (
     <div className="service-card mb-4">
