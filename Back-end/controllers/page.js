@@ -69,9 +69,8 @@ async function signInUser(req, res) {
           maxAge: 24 * 60 * 60 * 1000,
         })
         .status(201)
-        .json({ msg: "succeed" });
+        .json({ cookie: token, msg: "succeed" });
     } catch (error) {
-      console.error("Error generating token:", error);
       return res
         .status(400)
         .json({ msg: "Password is incorrect or email is incorrect" });
@@ -121,7 +120,6 @@ async function signInUser(req, res) {
         );
       }
     } catch (error) {
-      console.error("Error processing family change:", error);
       return res
         .status(400)
         .json({ msg: "An error occurred while processing the request." });
@@ -141,9 +139,8 @@ async function signInUser(req, res) {
           maxAge: 24 * 60 * 60 * 1000,
         })
         .status(201)
-        .json({ msg: "succeed" });
+        .json({ cookie: token, msg: "succeed" });
     } catch (error) {
-      console.error("Error generating token:", error);
       return res
         .status(400)
         .json({ msg: "Password is incorrect or email is incorrect" });
