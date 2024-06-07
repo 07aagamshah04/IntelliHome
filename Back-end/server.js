@@ -25,11 +25,11 @@ app.get("/api/chats/:familyId", async (req, res) => {
   try {
     const { familyId } = req.params;
     // console.log(familyId);
-    const messages = await Chat.find({ CreatedBy: familyId })
-    // .sort({ timestamp: -1 }); 
-      // .populate("CreatedBy", "name")
-      // .populate("SendedBy", "username")
-      // Sort messages by timestamp in descending order
+    const messages = await Chat.find({ CreatedBy: familyId });
+    // .sort({ timestamp: -1 });
+    // .populate("CreatedBy", "name")
+    // .populate("SendedBy", "username")
+    // Sort messages by timestamp in descending order
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch chat messages", error });
@@ -51,11 +51,11 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("User connected ", socket.id);
+  // console.log("User connected ", socket.id);
 
   // Handle incoming messages
   socket.on("message", async (data) => {
-    console.log(data);
+    // console.log(data);
 
     // Save the message to the database
     const { CreatedBy, SendedBy, text } = data;
@@ -67,18 +67,19 @@ io.on("connection", (socket) => {
       // Emit the message to the room
       io.to(CreatedBy).emit("receive-message", savedMessage);
     } catch (error) {
-      console.error("Error saving the message:", error);
+      // console.error("Error saving the message:", error);
+      throw new Error(error);
     }
   });
 
   // Handle joining rooms
   socket.on("join-room", (room) => {
     socket.join(room);
-    console.log(`User joined room ${room}`);
+    // console.log(`User joined room ${room}`);
   });
 
   socket.on("disconnect", () => {
-    console.log(`${socket.id} disconnected`);
+    // console.log(`${socket.id} disconnected`);
   });
 });
 
