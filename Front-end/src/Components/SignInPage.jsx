@@ -63,6 +63,8 @@ const SignInPage = () => {
         toast.success("Verified Successfully", {
           position: toast.position,
         });
+        const data = await response.json();
+        localStorage.setItem("token", data.cookie);
         navigate("/home/dashboard");
       } else {
         const errorData = await response.json();
