@@ -150,7 +150,7 @@ function Calendar() {
       try {
         const data = { name: "just authenticating and getting token" };
         const response = await fetch(
-          "http://localhost:8000/api/dashboard/members-token-verify",
+          "https://backend-intellihome-api.onrender.com/api/dashboard/members-token-verify",
           {
             method: "POST",
             headers: {
@@ -163,7 +163,7 @@ function Calendar() {
         if (response.ok) {
           try {
             const response = await fetch(
-              "http://localhost:8000/api/dashboard/add-event",
+              "https://backend-intellihome-api.onrender.com/api/dashboard/add-event",
               {
                 method: "POST",
                 headers: {
@@ -226,7 +226,7 @@ function Calendar() {
       try {
         const data = { name: "just authenticating and getting token" };
         const response = await fetch(
-          "http://localhost:8000/api/dashboard/members-token-verify",
+          "https://backend-intellihome-api.onrender.com/api/dashboard/members-token-verify",
           {
             method: "POST",
             headers: {
@@ -239,7 +239,7 @@ function Calendar() {
         if (response.ok) {
           try {
             const response = await fetch(
-              "http://localhost:8000/api/dashboard/get-events",
+              "https://backend-intellihome-api.onrender.com/api/dashboard/get-events",
               {
                 method: "GET",
                 headers: {
@@ -333,7 +333,7 @@ function Calendar() {
   const handleRemoveEvent = async (eventDate, eventId) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/dashboard/remove-event/${eventId}`,
+        `https://backend-intellihome-api.onrender.com/api/dashboard/remove-event/${eventId}`,
         {
           method: "DELETE",
           headers: {

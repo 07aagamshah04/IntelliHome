@@ -38,7 +38,7 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
           name: "just authenticating and getting token",
         };
         const response = await fetch(
-          "http://localhost:8000/api/family-settings/members-token-verify",
+          "https://backend-intellihome-api.onrender.com/api/family-settings/members-token-verify",
           {
             method: "POST",
             headers: {
@@ -51,7 +51,7 @@ const Members = ({ handleGroupClick, handleInvitation, role_de_baba }) => {
         if (response.ok) {
           try {
             const response = await fetch(
-              "http://localhost:8000/api/family-settings/get-member-list",
+              "https://backend-intellihome-api.onrender.com/api/family-settings/get-member-list",
               {
                 method: "GET",
                 headers: {

@@ -27,7 +27,7 @@ const Posts = () => {
       setLoading(true); // Set loading to true when fetching starts
       try {
         const authResponse = await fetch(
-          "http://localhost:8000/api/blogs/members-token-verify",
+          "https://backend-intellihome-api.onrender.com/api/blogs/members-token-verify",
           {
             method: "POST",
             headers: {
@@ -42,7 +42,7 @@ const Posts = () => {
 
         if (authResponse.ok) {
           const postsResponse = await fetch(
-            "http://localhost:8000/api/blogs/posts",
+            "https://backend-intellihome-api.onrender.com/api/blogs/posts",
             {
               method: "GET",
               headers: {
@@ -116,7 +116,7 @@ const Posts = () => {
       };
 
       const authResponse = await fetch(
-        "http://localhost:8000/api/blogs/members-token-verify",
+        "https://backend-intellihome-api.onrender.com/api/blogs/members-token-verify",
         {
           method: "POST",
           headers: {
@@ -131,7 +131,7 @@ const Posts = () => {
 
       if (authResponse.ok) {
         const postResponse = await fetch(
-          "http://localhost:8000/api/blogs/posts",
+          "https://backend-intellihome-api.onrender.com/api/blogs/posts",
           {
             method: "POST",
             headers: {
@@ -147,7 +147,7 @@ const Posts = () => {
             position: "top-right",
           });
           const updatedResponse = await fetch(
-            "http://localhost:8000/api/blogs/posts",
+            "https://backend-intellihome-api.onrender.com/api/blogs/posts",
             {
               method: "GET",
               headers: {
@@ -191,7 +191,7 @@ const Posts = () => {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/blogs/posts/${id}`,
+        `https://backend-intellihome-api.onrender.com/api/blogs/posts/${id}`,
         {
           method: "DELETE",
         }

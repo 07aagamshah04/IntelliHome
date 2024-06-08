@@ -96,7 +96,7 @@ const RegistrationPage = () => {
       };
       //Here we are checking whether user with same-id already exists
       const response = await fetch(
-        "http://localhost:8000/api/users/verify-email",
+        "https://backend-intellihome-api.onrender.com/api/users/verify-email",
         {
           method: "POST",
           headers: {
@@ -114,7 +114,7 @@ const RegistrationPage = () => {
             otp: Otp,
           };
           const response = await fetch(
-            "http://localhost:8000/api/users/send-email",
+            "https://backend-intellihome-api.onrender.com/api/users/send-email",
             {
               method: "POST",
               headers: {
@@ -178,13 +178,16 @@ const RegistrationPage = () => {
           role: role,
           familyId: familyId,
         };
-        const response = await fetch("http://localhost:8000/api/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
+        const response = await fetch(
+          "https://backend-intellihome-api.onrender.com/api/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
         if (response.ok) {
           // alert("Thank you for registration!!");
           toast.success("Thank you for registration!!", {
@@ -237,14 +240,14 @@ const RegistrationPage = () => {
         <form action="" onSubmit={doWork}>
           <h3>Create Account</h3>
           <div className="registration-form-wrapper">
-              <input
-                type="text"
-                ref={uname}
-                placeholder="Username"
-                className="registration-form-control"
-              />
-              <i className="zmdi zmdi-account"></i>
-            </div>
+            <input
+              type="text"
+              ref={uname}
+              placeholder="Username"
+              className="registration-form-control"
+            />
+            <i className="zmdi zmdi-account"></i>
+          </div>
           <div className="registration-form-wrapper">
             <input
               type="email"
@@ -260,7 +263,7 @@ const RegistrationPage = () => {
               name=""
               id=""
               ref={gender}
-              style={{fontSize:"14px"}}
+              style={{ fontSize: "14px" }}
               className="registration-form-control"
             >
               <option value="">Gender</option>
@@ -277,7 +280,7 @@ const RegistrationPage = () => {
             <input
               type="date"
               placeholder="DOB"
-              style={{fontSize:"14px",width:"101%"}}
+              style={{ fontSize: "14px", width: "101%" }}
               ref={dob}
               className="registration-form-control" /*style={{width : ""}}*/
             />

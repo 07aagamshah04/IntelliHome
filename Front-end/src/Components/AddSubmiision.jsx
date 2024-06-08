@@ -46,7 +46,7 @@ const AddSubmiision = () => {
           message: "just verifying it.",
         };
         const response = await fetch(
-          "http://localhost:8000/api/users/members-token-verify",
+          "https://backend-intellihome-api.onrender.com/api/users/members-token-verify",
           {
             method: "POST",
             headers: {
@@ -63,7 +63,7 @@ const AddSubmiision = () => {
           return;
         }
         const aadharResponse = await fetch(
-          "http://localhost:8000/api/users/aadhar",
+          "https://backend-intellihome-api.onrender.com/api/users/aadhar",
           {
             method: "GET",
             headers: {
@@ -94,13 +94,16 @@ const AddSubmiision = () => {
 
         setAadhar(aadharData);
 
-        const panResponse = await fetch("http://localhost:8000/api/users/pan", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+        const panResponse = await fetch(
+          "https://backend-intellihome-api.onrender.com/api/users/pan",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
         if (!panResponse.ok) {
           toast.error("Error fetching pan data", {
@@ -114,7 +117,7 @@ const AddSubmiision = () => {
         setPan(panData);
 
         const voterIdResponse = await fetch(
-          "http://localhost:8000/api/users/voterid",
+          "https://backend-intellihome-api.onrender.com/api/users/voterid",
           {
             method: "GET",
             headers: {
@@ -136,7 +139,7 @@ const AddSubmiision = () => {
         setVoterId(voteridData);
 
         const markSheetResponse = await fetch(
-          "http://localhost:8000/api/users/marksheet",
+          "https://backend-intellihome-api.onrender.com/api/users/marksheet",
           {
             method: "GET",
             headers: {
@@ -158,7 +161,7 @@ const AddSubmiision = () => {
         SetMarksheet(marksheetData);
 
         const licenseResponse = await fetch(
-          "http://localhost:8000/api/users/license",
+          "https://backend-intellihome-api.onrender.com/api/users/license",
           {
             method: "GET",
             headers: {
@@ -359,7 +362,7 @@ const AddSubmiision = () => {
             };
 
             const response = await fetch(
-              "http://localhost:8000/api/users/intellivault",
+              "https://backend-intellihome-api.onrender.com/api/users/intellivault",
               {
                 method: "POST",
                 headers: {
@@ -409,7 +412,7 @@ const AddSubmiision = () => {
             };
 
             const response = await fetch(
-              "http://localhost:8000/api/users/intellivault",
+              "https://backend-intellihome-api.onrender.com/api/users/intellivault",
               {
                 method: "POST",
                 headers: {
@@ -461,7 +464,7 @@ const AddSubmiision = () => {
             };
 
             const response = await fetch(
-              "http://localhost:8000/api/users/intellivault",
+              "https://backend-intellihome-api.onrender.com/api/users/intellivault",
               {
                 method: "POST",
                 headers: {
@@ -511,7 +514,7 @@ const AddSubmiision = () => {
             };
 
             const response = await fetch(
-              "http://localhost:8000/api/users/intellivault",
+              "https://backend-intellihome-api.onrender.com/api/users/intellivault",
               {
                 method: "POST",
                 headers: {
@@ -561,7 +564,7 @@ const AddSubmiision = () => {
             };
 
             const response = await fetch(
-              "http://localhost:8000/api/users/intellivault",
+              "https://backend-intellihome-api.onrender.com/api/users/intellivault",
               {
                 method: "POST",
                 headers: {
@@ -597,7 +600,7 @@ const AddSubmiision = () => {
   const handleDeleteAadhar = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/users/aadhar/${id}`,
+        `https://backend-intellihome-api.onrender.com/api/users/aadhar/${id}`,
         {
           method: "DELETE",
         }
@@ -623,7 +626,7 @@ const AddSubmiision = () => {
   const handleDeletePan = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/users/pan/${id}`,
+        `https://backend-intellihome-api.onrender.com/api/users/pan/${id}`,
         {
           method: "DELETE",
         }
@@ -649,7 +652,7 @@ const AddSubmiision = () => {
   const handleDeleteVoterId = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/users/voterid/${id}`,
+        `https://backend-intellihome-api.onrender.com/api/users/voterid/${id}`,
         {
           method: "DELETE",
         }
@@ -675,7 +678,7 @@ const AddSubmiision = () => {
   const handleDeleteLicense = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/users/license/${id}`,
+        `https://backend-intellihome-api.onrender.com/api/users/license/${id}`,
         {
           method: "DELETE",
         }
@@ -701,7 +704,7 @@ const AddSubmiision = () => {
   const handleDeleteMarksheet = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/users/marksheet/${id}`,
+        `https://backend-intellihome-api.onrender.com/api/users/marksheet/${id}`,
         {
           method: "DELETE",
         }
