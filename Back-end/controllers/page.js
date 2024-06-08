@@ -64,9 +64,10 @@ async function signInUser(req, res) {
       return res
         .cookie("token", token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Lax",
-          maxAge: 24 * 60 * 60 * 1000,
+          secure: true, // Ensure this is true if your site is served over HTTPS
+          sameSite: "None", // Required for cross-site requests
+          maxAge: 24 * 60 * 60 * 1000, // 1 day
+          path: "/",
         })
         .status(201)
         .json({ cookie: token, msg: "succeed" });
@@ -134,9 +135,10 @@ async function signInUser(req, res) {
       return res
         .cookie("token", token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Lax",
-          maxAge: 24 * 60 * 60 * 1000,
+          secure: true, // Ensure this is true if your site is served over HTTPS
+          sameSite: "None", // Required for cross-site requests
+          maxAge: 24 * 60 * 60 * 1000, // 1 day
+          path: "/",
         })
         .status(201)
         .json({ cookie: token, msg: "succeed" });

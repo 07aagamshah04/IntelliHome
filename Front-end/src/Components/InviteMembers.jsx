@@ -20,7 +20,7 @@ const InviteMembers = ({ handleInviteToggle }) => {
       };
       //When deployed API change it
       const response = await fetch(
-        "http://localhost:8000/api/family-settings/send-request",
+        "https://backend-intellihome-api.onrender.com/api/family-settings/send-request",
         {
           method: "POST",
           headers: {

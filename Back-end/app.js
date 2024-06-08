@@ -19,8 +19,8 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // CORS middleware
 app.use(
   cors({
-    origin: "*", // Allow all origins. Replace with specific origin for production.
-    // origin: "http://localhost:5173", // Allow only this origin to access your backend
+    // origin: "*", // Allow all origins. Replace with specific origin for production.
+    origin: "http://localhost:5173", // Allow only this origin to access your backend
     optionsSuccessStatus: 200,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // If your requests require cookies or other credentials
@@ -63,5 +63,4 @@ app.use("/api/blogs", Blogs);
 
 app.listen(PORT, () => {
   console.log(`SERVER STARTED AT ${PORT}`);
-  console.log(MONGO_URL);
 });

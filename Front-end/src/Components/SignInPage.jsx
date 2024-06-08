@@ -49,15 +49,18 @@ const SignInPage = () => {
         password: pass.current.value,
         familyId: familyId,
       };
-      const response = await fetch("http://localhost:8000/api/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // "Access-Control-Allow-Credentials": true,
-        },
-        body: JSON.stringify(userData),
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://backend-intellihome-api.onrender.com/api/signin",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // "Access-Control-Allow-Credentials": true,
+          },
+          body: JSON.stringify(userData),
+          credentials: "include",
+        }
+      );
       if (response.ok) {
         toast.success("Verified Successfully", {
           position: toast.position,
