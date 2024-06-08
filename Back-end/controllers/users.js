@@ -211,7 +211,7 @@ async function sendEmail(req, res) {
     attachments: [
       {
         filename: "text-logo.png",
-        path: "text-logo.png", // Path to your image file
+        path: "../text-logo.png", // Path to your image file
         cid: "intelli_logo", // Same CID value as in the HTML img src
       },
     ],

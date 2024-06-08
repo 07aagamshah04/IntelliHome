@@ -146,24 +146,25 @@ const Posts = () => {
           toast.success("Your Post has been posted", {
             position: "top-right",
           });
-          const updatedResponse = await fetch(
-            "https://backend-intellihome-api.onrender.com/api/blogs/posts",
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-            }
-          );
-          const data = await updatedResponse.json();
-          if (Array.isArray(data)) {
-            setPosts(data);
-          } else {
-            toast.error("Error fetching the updated posts", {
-              position: "top-right",
-            });
-          }
+          // const updatedResponse = await fetch(
+          //   "https://backend-intellihome-api.onrender.com/api/blogs/posts",
+          //   {
+          //     method: "GET",
+          //     headers: {
+          //       "Content-Type": "application/json",
+          //     },
+          //     credentials: "include",
+          //   }
+          // );
+          // const data = await updatedResponse.json();
+          // if (Array.isArray(data)) {
+          //   setPosts(data);
+          // } else {
+          //   toast.error("Error fetching the updated posts", {
+          //     position: "top-right",
+          //   });
+          // }
+          setPosts((posts) => [...posts, post]);
         } else {
           const errorData = await postResponse.json();
           toast.error(errorData.msg, {
