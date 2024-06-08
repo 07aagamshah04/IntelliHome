@@ -9,6 +9,7 @@ import { RiUserSettingsFill, RiLogoutCircleLine } from "react-icons/ri";
 import image from "../assets/text-logo.png";
 import { Modal, Button, Offcanvas } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const location = useLocation();
@@ -35,6 +36,7 @@ const Navbar = () => {
         credentials: "include",
       });
       if (response.ok) {
+        localStorage.removeItem("token");
         window.location.href = "/";
       } else {
         toast.error("Error in Logout", {

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useRef, useState } from "react";
 import DeleteGroup from "./DeleteGroup";
 import Members from "./Members";
@@ -96,6 +97,7 @@ const MemberSection = () => {
             credentials: "include",
           });
           if (response.ok) {
+            localStorage.removeItem("token");
             window.location.href = "/";
           } else {
             toast.error("Error in Logout", {

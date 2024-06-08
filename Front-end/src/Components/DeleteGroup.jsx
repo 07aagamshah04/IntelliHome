@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { RiDeleteBinLine } from "react-icons/ri";
 import image from "../assets/5220.jpg";
 import { toast } from "react-toastify";
@@ -35,6 +37,7 @@ const DeleteGroup = ({ userRole }) => {
               credentials: "include",
             });
             if (response.ok) {
+              localStorage.removeItem("token");
               window.location.href = "/";
             } else {
               toast.error("Error in Logout", {

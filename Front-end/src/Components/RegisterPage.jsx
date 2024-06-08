@@ -237,14 +237,14 @@ const RegistrationPage = () => {
         <form action="" onSubmit={doWork}>
           <h3>Create Account</h3>
           <div className="registration-form-wrapper">
-            <input
-              type="text"
-              ref={uname}
-              placeholder="Username"
-              className="registration-form-control"
-            />
-            <i className="zmdi zmdi-account"></i>
-          </div>
+              <input
+                type="text"
+                ref={uname}
+                placeholder="Username"
+                className="registration-form-control"
+              />
+              <i className="zmdi zmdi-account"></i>
+            </div>
           <div className="registration-form-wrapper">
             <input
               type="email"
@@ -260,6 +260,7 @@ const RegistrationPage = () => {
               name=""
               id=""
               ref={gender}
+              style={{fontSize:"14px"}}
               className="registration-form-control"
             >
               <option value="">Gender</option>
@@ -275,6 +276,8 @@ const RegistrationPage = () => {
           <div className="registration-form-wrapper">
             <input
               type="date"
+              placeholder="DOB"
+              style={{fontSize:"14px",width:"101%"}}
               ref={dob}
               className="registration-form-control" /*style={{width : ""}}*/
             />

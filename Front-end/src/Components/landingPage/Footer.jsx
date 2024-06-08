@@ -25,7 +25,7 @@ const Footer = () => {
         <ul className="nav pb-3 mb-3">
           <li className="nav-item" style={{ padding: "0 8px" }}>
             <a
-              href="https://www.instagram.com"
+              href="https://www.linkedin.com/in/jaimin-salvi"
               className="nav-link px-2"
               target="_blank"
               style={{
@@ -39,7 +39,7 @@ const Footer = () => {
           </li>
           <li className="nav-item" style={{ padding: "0 8px" }}>
             <a
-              href="https://www.twitter.com"
+              href="https://www.linkedin.com/in/aagam-shah-09285a266/"
               className="nav-link px-2 "
               target="_blank"
               style={{
@@ -53,7 +53,7 @@ const Footer = () => {
           </li>
           <li className="nav-item" style={{ padding: "0 8px" }}>
             <a
-              href="https://www.facebook.com"
+              href="https://www.linkedin.com/in/aagam-shah-09285a266/"
               className="nav-link px-2"
               target="_blank"
               style={{
@@ -67,7 +67,7 @@ const Footer = () => {
           </li>
           <li className="nav-item" style={{ padding: "0 8px" }}>
             <a
-              href="https://www.linkedin.com"
+              href="https://www.linkedin.com/in/jaimin-salvi"
               target="_blank"
               className="nav-link px-2 "
               style={{

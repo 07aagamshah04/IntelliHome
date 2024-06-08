@@ -1,12 +1,14 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import Loader from "./Loader";
 
 const GroupChat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [payload, setPayload] = useState({});
   const messagesEndRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   const socket = useMemo(
     () =>
@@ -48,8 +50,15 @@ const GroupChat = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Unauthorized Acess to resource.");
+      setInterval(() => {
+        window.location.href = "/";
+      }, 2000);
+      return;
+    }
     const payload = parseJWT(token);
-
+    setLoading(true);
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -86,6 +95,7 @@ const GroupChat = () => {
     socket.on("receive-message", (data) => {
       setMessages((messages) => [...messages, data]);
     });
+    setLoading(false);
 
     fetchData();
 
@@ -118,40 +128,57 @@ const GroupChat = () => {
 
   return (
     <div className="group-chat-container">
-      <div className="message-container">
-        {messages.map((message, index) => {
-          const isSelf = message.SendedBy === payload.userName;
-          const name = message.SendedBy.split(" ");
-          const logo = name[0][0].toUpperCase() + name[1][0].toUpperCase();
-          const senderColor = generateSenderColor(message.SendedBy);
-          return (
-            <div key={index} className={`message ${isSelf ? "self" : "other"}`}>
-              <div
-                className="logo-container"
-                style={{ backgroundColor: senderColor }}
-              >
-                {logo}
-              </div>
-              <div
-                className="text"
-                style={{ backgroundColor: isSelf ? "#dcf8c6" : "#fff" }}
-              >
-                <div className="sender" style={{ color: senderColor }}>
-                  {message.SendedBy}
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="message-container">
+            {messages.map((message, index) => {
+              const isSelf = message.SendedBy === payload.userName;
+              const name = message.SendedBy.split(" ");
+              const logo = name[0][0].toUpperCase() + name[1][0].toUpperCase();
+              const senderColor = generateSenderColor(message.SendedBy);
+              return (
+                <div
+                  key={index}
+                  className={`message ${isSelf ? "self" : "other"}`}
+                >
+                  <div
+                    className="logo-container"
+                    style={{ backgroundColor: senderColor }}
+                  >
+                    {logo}
+                  </div>
+                  <div
+                    className="text"
+                    style={{ backgroundColor: isSelf ? "#dcf8c6" : "#fff" }}
+                  >
+                    <div className="sender" style={{ color: senderColor }}>
+                      {message.SendedBy}
+                    </div>
+                    <div className="message-text large">{message.text}</div>
+                    <div
+                      className="timestamp small"
+                      style={{
+                        color: "gray",
+                        fontSize: "11px",
+                        textAlign: "right",
+                      }}
+                    >
+                      {formatTimestamp(message.timestamp)}
+                    </div>
+                  </div>
                 </div>
-                <div className="message-text large">{message.text}</div>
-                <div className="timestamp small" style={{ color: "gray" }}>
-                  {formatTimestamp(message.timestamp)}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-        <div ref={messagesEndRef} />
-      </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+        </>
+      )}
       <div className="input-container">
         <input
           type="text"
+          className="groupchat-input"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           placeholder="Type your message..."
