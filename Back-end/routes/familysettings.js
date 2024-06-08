@@ -16,7 +16,7 @@ router.route("/get-member-list").get(haveData);
 
 router.route("/members-token-verify").post(verifyMemebr);
 
-router.route("/deleteUser").delete(deleteMe);
+router.route("/deleteUser").post(deleteMe);
 
 router.route("/deleteGroup").delete(deleteGroup);
 

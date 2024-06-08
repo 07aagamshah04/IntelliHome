@@ -25,9 +25,13 @@ const transporter = nodeMailer.createTransport({
 async function sendRequest(req, res) {
   const { email } = req.body;
 
+  console.log(email);
+
   const familyId = req.user.familyId;
   const name = req.user.userName;
   const senderEmail = req.user.email;
+
+  console.log(familyId, name, senderEmail);
 
   try {
     // Find the family by ID
@@ -195,7 +199,7 @@ async function sendRequest(req, res) {
         await transporter.sendMail(mailOptions);
         return res.status(200).json({ message: "Email sent successfully" });
       } catch (error) {
-        // console.error("Error:", error);
+        console.error("Error:", error);
         return res.status(500).json({ message: "Error sending email" });
       }
     }
@@ -279,26 +283,45 @@ async function deleteGroup(req, res) {
 }
 
 async function deleteMe(req, res) {
-  const { familyId, _id } = req.user;
+  const { familyId } = req.user;
+  const { email } = req.body;
 
   try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the family by familyId
     const family = await Family.findById(familyId).exec();
+
+    if (!family) {
+      return res.status(404).json({ message: "Family not found" });
+    }
+
+    // Remove the user from the family members
     family.members = family.members.filter(
-      (memberId) => memberId.toString() !== _id.toString()
+      (memberId) => memberId.toString() !== user._id.toString()
     );
+
     // Save the updated family document
     await family.save();
 
-    const result1 = await User.updateOne(
-      { _id: _id },
-      { $set: { role: true } }
-    );
+    // Update the user's role to true
+    await User.updateOne({ _id: user._id }, { $set: { role: true } });
 
-    const result = await Family.create({
-      members: [_id],
+    // Create a new family with the user as the only member
+    await Family.create({
+      members: [user._id],
     });
-    return res.status(202).json({ message: "Done" });
+
+    return res.status(202).json({
+      message: "User has been successfully updated and moved to a new family",
+    });
   } catch (error) {
+    console.error(error);
     return res.status(400).json({ message: "Error deleting User" });
   }
 }

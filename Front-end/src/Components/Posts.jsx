@@ -107,6 +107,15 @@ const Posts = () => {
       return;
     }
 
+    const file = selectedFiles[0];
+    if (file.size > 200 * 1024) {
+      // 200 KB in bytes
+      toast.error("File size should not exceed 200 KB.", {
+        position: "top-right",
+      });
+      return;
+    }
+
     try {
       const base64 = await convertToBase64(selectedFiles[0]);
       const post = {
