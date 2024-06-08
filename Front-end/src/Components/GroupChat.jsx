@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState} from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 
@@ -6,6 +6,7 @@ const GroupChat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [payload, setPayload] = useState({});
+  const messagesEndRef = useRef(null);
 
   const socket = useMemo(
     () =>
@@ -32,10 +33,18 @@ const GroupChat = () => {
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       return JSON.parse(window.atob(base64));
     } catch (e) {
-      console.error("Failed to parse JWT", e);
       return null;
     }
   };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Scroll to bottom on initial load and when messages change
+  useLayoutEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -60,14 +69,16 @@ const GroupChat = () => {
           toast.error("Error fetching data!!");
         }
       } catch (error) {
-        toast.error("Error fetching the data");
+        toast.error("Error fetching the data!!");
       }
     };
 
     setPayload(payload);
 
     socket.on("connect", () => {
-      console.log("WebSocket connected");
+      // toast.success("Welcome to the Chat!", {
+      //   position: toast.position,
+      // });
     });
 
     socket.emit("join-room", payload.familyId);
@@ -80,19 +91,30 @@ const GroupChat = () => {
 
     return () => {
       socket.disconnect();
-      console.log("WebSocket disconnected");
     };
   }, [socket]);
 
   const generateSenderColor = (name) => {
-    const colors = ["#5ECF9C", "#53BDEB", "#E542A3", "#08BA67", "#F7A22E"]; // List of colors
+    const colors = ["#5ECF9C", "#53BDEB", "#E542A3", "#08BA67", "#F7A22E"];
     const hash = name
       .split("")
       .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const index = hash % colors.length; // Use hash to select color index
-    return colors[index]; // Return the selected color
+    const index = hash % colors.length;
+    return colors[index];
   };
 
+  // Function to format the timestamp to HH:mm AM/PM format
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12; // Convert to 12-hour format
+    const formattedTime = `${hours}:${
+      minutes < 10 ? "0" : ""
+    }${minutes} ${ampm}`;
+    return formattedTime;
+  };
 
   return (
     <div className="group-chat-container">
@@ -117,11 +139,15 @@ const GroupChat = () => {
                 <div className="sender" style={{ color: senderColor }}>
                   {message.SendedBy}
                 </div>
-                {message.text}
+                <div className="message-text large">{message.text}</div>
+                <div className="timestamp small" style={{ color: "gray" }}>
+                  {formatTimestamp(message.timestamp)}
+                </div>
               </div>
             </div>
           );
         })}
+        <div ref={messagesEndRef} />
       </div>
       <div className="input-container">
         <input

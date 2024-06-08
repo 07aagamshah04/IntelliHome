@@ -52,10 +52,18 @@ const RegistrationPage = () => {
       pass2.current.value === "" ||
       pass1.current.value !== pass2.current.value
     ) {
-      // alert("WRONG INPUTS ENTERED OR FIELD IS MISSING OR PASSWORD INCORRECT");
       toast.error("FIELD IS MISSING OR BOTH PASSWORDS ARE NOT MATCHING", {
         position: toast.position,
       });
+      return;
+    }
+    if (!/^(\w+\s+\w+)$/.test(uname.current.value)) {
+      toast.error(
+        "Your username must contain two words with space in between",
+        {
+          position: toast.position,
+        }
+      );
       return;
     }
 
@@ -201,8 +209,8 @@ const RegistrationPage = () => {
     } else {
       // alert("Wrong entered");
       toast.error("Wrong entered", {
-          position: toast.position,
-        });
+        position: toast.position,
+      });
       return;
     }
   };

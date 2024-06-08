@@ -569,6 +569,8 @@ body{margin-top:20px;}
   color: crimson;
 }
 
+
+
 /*                                                                   Sign-In Card                                                 */
 
 @media (min-width:991px) {
@@ -769,15 +771,16 @@ textarea.flex-grow-1 {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  overflow: hidden; /* Remove overflow here */
+  overflow: hidden; /* No overflow here */
 }
 
 .message-container {
   flex-grow: 1;
   padding: 10px;
-  overflow-y: auto; /* Allow scrolling only here */
+  overflow-y: auto; /* Allow scrolling here */
   display: flex;
   flex-direction: column;
+  height: 100%; /* Ensure it takes full height */
 }
 
 .input-container {
