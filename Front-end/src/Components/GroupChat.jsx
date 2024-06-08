@@ -12,7 +12,7 @@ const GroupChat = () => {
 
   const socket = useMemo(
     () =>
-      io("http://localhost:5000", {
+      io("https://intellihome.onrender.com", {
         withCredentials: true,
       }),
     []
@@ -62,7 +62,7 @@ const GroupChat = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/chats/${payload.familyId}`,
+          `https://intellihome.onrender.com/api/chats/${payload.familyId}`,
           {
             method: "GET",
             headers: {
