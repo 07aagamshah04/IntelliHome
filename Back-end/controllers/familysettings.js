@@ -31,7 +31,7 @@ async function sendRequest(req, res) {
   const name = req.user.userName;
   const senderEmail = req.user.email;
 
-  console.log(familyId, name, senderEmail);
+  console.log(familyId, name, senderEmail, EMAIL, PASSWORD);
 
   try {
     // Find the family by ID
@@ -60,7 +60,7 @@ async function sendRequest(req, res) {
       let lastname = fullname[1] || "";
       let logo = firstname[0] + lastname[0];
       const mailOptions = {
-        from: "intellihome.official@gmail.com",
+        from: `${EMAIL}`,
         to: email,
         subject: `Join ${firstname}'s family group?`,
         html: `<!DOCTYPE html>
