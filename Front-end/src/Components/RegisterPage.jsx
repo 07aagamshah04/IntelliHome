@@ -152,6 +152,7 @@ const RegistrationPage = () => {
       }
     } catch (error) {
       // alert("Email-id already exists");
+      console.error(error);
       toast.warning("Email-id already exists", {
         position: toast.position,
       });

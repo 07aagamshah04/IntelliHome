@@ -29,7 +29,7 @@ const Chat = mongoose.model("chat", chatSchema);
 
 // CORS configuration
 const corsOptions = {
-  origin: "intelli-home.vercel.app",
+  origin: "https://intelli-home.vercel.app",
   methods: ["GET", "POST"],
   credentials: true,
 };
