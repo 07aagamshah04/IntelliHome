@@ -187,7 +187,7 @@ async function sendRequest(req, res) {
         attachments: [
           {
             filename: "text-logo.png",
-            path: "../text-logo.png", // Update with the correct path to your image file
+            path: "text-logo.png", // Update with the correct path to your image file
             cid: "intelli_logo", // Same CID value as in the HTML img src
           },
         ],
