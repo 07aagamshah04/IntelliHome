@@ -14,13 +14,18 @@ const nodeMailer = require("nodemailer");
 const EMAIL = process.env.EMAIL;
 const PASSWORD = process.env.PASSWORD;
 
-const transporter = nodeMailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: EMAIL,
-    pass: PASSWORD,
-  },
-});
+const transporter = nodeMailer.createTransport(
+  smtpTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
+    },
+  })
+);
 
 async function sendRequest(req, res) {
   const { email } = req.body;
