@@ -11,6 +11,7 @@ const Marksheet = require("../models/marksheet");
 const Pan = require("../models/pan");
 const VoterId = require("../models/voterid");
 const nodeMailer = require("nodemailer");
+const smtpTransport = require("nodemailer-smtp-transport");
 const EMAIL = process.env.EMAIL;
 const PASSWORD = process.env.PASSWORD;
 
