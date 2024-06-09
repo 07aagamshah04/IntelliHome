@@ -248,7 +248,7 @@ const MemberSection = () => {
               &nbsp;
               {role === "Member" && userRole === "Family Manager"
                 ? "Remove Member"
-                : delbtnMessage[idx.current && role]}
+                : delbtnMessage[idx.current]}
             </button>
           </div>
         </div>
