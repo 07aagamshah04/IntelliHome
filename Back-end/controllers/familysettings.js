@@ -16,28 +16,21 @@ const EMAIL = process.env.EMAIL;
 const PASSWORD = process.env.PASSWORD;
 
 const transporter = nodeMailer.createTransport({
-  // smtpTransport({
   service: "gmail",
-  // host: "smtp.gmail.com",
   port: 465,
   secure: true,
   auth: {
     user: "intellihome.official@gmail.com",
     pass: "nsas mawn svva txwn",
   },
-  // })
 });
 
 async function sendRequest(req, res) {
   const { email } = req.body;
 
-  console.log(email);
-
   const familyId = req.user.familyId;
   const name = req.user.userName;
   const senderEmail = req.user.email;
-
-  console.log(familyId, name, senderEmail, EMAIL, PASSWORD);
 
   try {
     // Find the family by ID
@@ -69,141 +62,136 @@ async function sendRequest(req, res) {
         from: `intellihome.official@gmail.com`,
         to: email,
         subject: `Join ${firstname}'s family group?`,
-        text: "hello",
+        html: `<!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Invitation</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                background-color: #f8f9fa;
+                width: 100%;
+              }
+              .container {
+                text-align: center;
+                background: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                max-width: 500px;
+                width: 100%;
+                margin: 20px auto;
+              }
+              .intelli-logo {
+                height: 2.6rem;
+                width: 15rem;
+                border-radius: 8%;
+                margin-bottom: 20px;
+              }
+              .profile-circle {
+                background-color: #08B765;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: inline-block;
+                vertical-align: middle;
+              }
+              .profile-circle p {
+                color: white;
+                margin: 0;
+                font-size: 15px;
+                line-height: 32px;
+                text-align: center;
+              }
+              .email {
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 10px;
+              }
+              .message {
+                text-align: left;
+                margin: 10px 30px;
+                margin-bottom: 22px;
+              }
+              .btn {
+                background-color: white;
+                color: white;
+                border: 1px solid gray;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+              }
+              .btn a {
+                color: white;
+                text-decoration: none;
+              }
+              .btn:hover {
+                border: 1px solid blue;
+              }
+              hr {
+                border: none;
+                border-top: 1px solid #e0e0e0;
+                margin: 20px 0;
+              }
+              .break {
+                height: 1.5px;
+                color: #fff;
+                width: 90%;
+                background-color: rgb(221, 218, 216);
+                margin: 25px auto;
+              }
+              @media (max-width: 600px) {
+                .container {
+                  padding: 15px;
+                }
+                .btn {
+                  padding: 8px 16px;
+                  font-size: 14px;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <img src="cid:intelli_logo" alt="IntelliHome Logo" class="intelli-logo">
+              <p>${name} wants you to join his family group</p>
+              <table align="center" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>
+                    <div class="profile-circle">
+                      <p>${logo}</p>
+                    </div>
+                  </td>
+                  <td class="email">${senderEmail}</td>
+                </tr>
+              </table>
+              <div class="break"></div>
+              <p class="message">Hi ${email},</p>
+              <p class="message">You can join ${firstname}'s (${senderEmail}) family group to connect with your family on IntelliHome and share services among the family members.</p>
+              <p class="message">Anyone who joins a family group can see the name, email of current group members.</p>
+              <br>
+              <a href="http://localhost:5173/register-page/?familyId=${familyId}" class="btn">Accept Invitation</a>
+            </div>
+          </body>
+        </html>
+        `,
+        attachments: [
+          {
+            filename: "text-logo.png",
+            path: "../text-logo.png", // Update with the correct path to your image file
+            cid: "intelli_logo", // Same CID value as in the HTML img src
+          },
+        ],
       };
-
-      // from: `${EMAIL}`,
-      //   to: email,
-      //   subject: `Join ${firstname}'s family group?`,
-      //   html: `<!DOCTYPE html>
-      //   <html lang="en">
-      //     <head>
-      //       <meta charset="UTF-8">
-      //       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      //       <title>Invitation</title>
-      //       <style>
-      //         body {
-      //           font-family: Arial, sans-serif;
-      //           margin: 0;
-      //           padding: 0;
-      //           box-sizing: border-box;
-      //           background-color: #f8f9fa;
-      //           width: 100%;
-      //         }
-      //         .container {
-      //           text-align: center;
-      //           background: #fff;
-      //           padding: 20px;
-      //           border-radius: 10px;
-      //           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      //           max-width: 500px;
-      //           width: 100%;
-      //           margin: 20px auto;
-      //         }
-      //         .intelli-logo {
-      //           height: 2.6rem;
-      //           width: 15rem;
-      //           border-radius: 8%;
-      //           margin-bottom: 20px;
-      //         }
-      //         .profile-circle {
-      //           background-color: #08B765;
-      //           width: 32px;
-      //           height: 32px;
-      //           border-radius: 50%;
-      //           display: inline-block;
-      //           vertical-align: middle;
-      //         }
-      //         .profile-circle p {
-      //           color: white;
-      //           margin: 0;
-      //           font-size: 15px;
-      //           line-height: 32px;
-      //           text-align: center;
-      //         }
-      //         .email {
-      //           display: inline-block;
-      //           vertical-align: middle;
-      //           margin-left: 10px;
-      //         }
-      //         .message {
-      //           text-align: left;
-      //           margin: 10px 30px;
-      //           margin-bottom: 22px;
-      //         }
-      //         .btn {
-      //           background-color: white;
-      //           color: white;
-      //           border: 1px solid gray;
-      //           padding: 10px 20px;
-      //           border-radius: 5px;
-      //           cursor: pointer;
-      //           text-align: center;
-      //           text-decoration: none;
-      //           display: inline-block;
-      //           font-size: 16px;
-      //         }
-      //         .btn a {
-      //           color: white;
-      //           text-decoration: none;
-      //         }
-      //         .btn:hover {
-      //           border: 1px solid blue;
-      //         }
-      //         hr {
-      //           border: none;
-      //           border-top: 1px solid #e0e0e0;
-      //           margin: 20px 0;
-      //         }
-      //         .break {
-      //           height: 1.5px;
-      //           color: #fff;
-      //           width: 90%;
-      //           background-color: rgb(221, 218, 216);
-      //           margin: 25px auto;
-      //         }
-      //         @media (max-width: 600px) {
-      //           .container {
-      //             padding: 15px;
-      //           }
-      //           .btn {
-      //             padding: 8px 16px;
-      //             font-size: 14px;
-      //           }
-      //         }
-      //       </style>
-      //     </head>
-      //     <body>
-      //       <div class="container">
-      //         <img src="cid:intelli_logo" alt="IntelliHome Logo" class="intelli-logo">
-      //         <p>${name} wants you to join his family group</p>
-      //         <table align="center" cellspacing="0" cellpadding="0">
-      //           <tr>
-      //             <td>
-      //               <div class="profile-circle">
-      //                 <p>${logo}</p>
-      //               </div>
-      //             </td>
-      //             <td class="email">${senderEmail}</td>
-      //           </tr>
-      //         </table>
-      //         <div class="break"></div>
-      //         <p class="message">Hi ${email},</p>
-      //         <p class="message">You can join ${firstname}'s (${senderEmail}) family group to connect with your family on IntelliHome and share services among the family members.</p>
-      //         <p class="message">Anyone who joins a family group can see the name, email of current group members.</p>
-      //         <br>
-      //         <a href="http://localhost:5173/register-page/?familyId=${familyId}" class="btn">Accept Invitation</a>
-      //       </div>
-      //     </body>
-      //   </html>
-      //   `,
-      //   attachments: [
-      //     {
-      //       filename: "text-logo.png",
-      //       path: "../text-logo.png", // Update with the correct path to your image file
-      //       cid: "intelli_logo", // Same CID value as in the HTML img src
-      //     },
-      //   ],
 
       try {
         // Send email

@@ -11,9 +11,11 @@ const PASSWORD = process.env.PASSWORD;
 
 const transporter = nodeMailer.createTransport({
   service: "gmail",
+  port: 465,
+  secure: true,
   auth: {
-    user: EMAIL,
-    pass: PASSWORD,
+    user: "intellihome.official@gmail.com",
+    pass: "nsas mawn svva txwn",
   },
 });
 
