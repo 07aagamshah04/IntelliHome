@@ -18,12 +18,12 @@ const PASSWORD = process.env.PASSWORD;
 const transporter = nodeMailer.createTransport({
   // smtpTransport({
   service: "gmail",
-  host: "smtp.gmail.com",
+  // host: "smtp.gmail.com",
   port: 465,
   secure: true,
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.PASSWORD,
+    user: "intellihome.official@gmail.com",
+    pass: "nsas mawn svva txwn",
   },
   // })
 });
@@ -66,7 +66,7 @@ async function sendRequest(req, res) {
       let lastname = fullname[1] || "";
       let logo = firstname[0] + lastname[0];
       const mailOptions = {
-        from: `${EMAIL}`,
+        from: `intellihome.official@gmail.com`,
         to: email,
         subject: `Join ${firstname}'s family group?`,
         text: "hello",
