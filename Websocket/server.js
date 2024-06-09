@@ -29,13 +29,12 @@ const Chat = mongoose.model("chat", chatSchema);
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "intelli-home.vercel.app",
   methods: ["GET", "POST"],
   credentials: true,
 };
 
 app.use(cors(corsOptions));
-
 
 // Route to get chat messages
 app.get("/api/chats/:familyId", async (req, res) => {

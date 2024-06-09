@@ -179,7 +179,7 @@ async function sendRequest(req, res) {
               <p class="message">You can join ${firstname}'s (${senderEmail}) family group to connect with your family on IntelliHome and share services among the family members.</p>
               <p class="message">Anyone who joins a family group can see the name, email of current group members.</p>
               <br>
-              <a href="http://localhost:5173/register-page/?familyId=${familyId}" class="btn">Accept Invitation</a>
+              <a href="intelli-home.vercel.app/register-page/?familyId=${familyId}" class="btn">Accept Invitation</a>
             </div>
           </body>
         </html>
