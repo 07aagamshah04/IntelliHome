@@ -20,7 +20,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(
   cors({
     // origin: "*", // Allow all origins. Replace with specific origin for production.
-    origin: "https://intelli-home.vercel.app", // Allow only this origin to access your backend
+    origin: "https://intelli-home.netlify.app", // Allow only this origin to access your backend
     optionsSuccessStatus: 200,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // If your requests require cookies or other credentials
