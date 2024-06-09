@@ -139,7 +139,7 @@ const RegistrationPage = () => {
           }
         } catch (error) {
           // console.error("Error adding user:", error);
-          toast.error("Error adding user", {
+          toast.error("Unable to send OTP to your email-id", {
             position: toast.position,
           });
         }

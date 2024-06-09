@@ -67,56 +67,115 @@ const MemberSection = () => {
   }
 
   const deleteMember = async (memberId, familyId) => {
-    try {
-      const response = await fetch(
-        `https://backend-intellihome-api.onrender.com/api/family-settings/deleteUser`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+    if (userRole === "Family Manager" && role === "Family Manager") {
+      try {
+        const response = await fetch(
+          `https://backend-intellihome-api.onrender.com/api/family-settings/deleteGroup`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
-      if (!response.ok) {
-        toast.error("Failed to delete member", {
-          position: toast.position,
-        });
-      } else {
-        const data = await response.json();
-        toast.success("Member deleted successfully", {
-          position: toast.position,
-        });
-        try {
-          const response = await fetch(
-            "https://backend-intellihome-api.onrender.com/api/logout",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
+        if (!response.ok) {
+          toast.error("Failed to delete Group", {
+            position: toast.position,
+          });
+        } else {
+          const data = await response.json();
+          toast.success("Group deleted successfully", {
+            position: toast.position,
+          });
+          try {
+            const response = await fetch(
+              "https://backend-intellihome-api.onrender.com/api/logout",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              localStorage.removeItem("token");
+              window.location.href = "/";
+            } else {
+              toast.error("Error in Logout", {
+                position: toast.position,
+              });
             }
-          );
-          if (response.ok) {
-            localStorage.removeItem("token");
-            window.location.href = "/";
-          } else {
+          } catch (error) {
             toast.error("Error in Logout", {
               position: toast.position,
             });
           }
-        } catch (error) {
-          toast.error("Error in Logout", {
+        }
+      } catch (error) {
+        toast.error("Failed to delete group", {
+          position: toast.position,
+        });
+      }
+    } else {
+      try {
+        let data;
+        data = {
+          email: email,
+        };
+        const response = await fetch(
+          `https://backend-intellihome-api.onrender.com/api/family-settings/deleteUser`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          toast.error("Failed to delete member", {
             position: toast.position,
           });
+        } else {
+          const data = await response.json();
+          toast.success("Member deleted successfully", {
+            position: toast.position,
+          });
+          try {
+            const response = await fetch(
+              "https://backend-intellihome-api.onrender.com/api/logout",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              localStorage.removeItem("token");
+              window.location.href = "/";
+            } else {
+              toast.error("Error in Logout", {
+                position: toast.position,
+              });
+            }
+          } catch (error) {
+            toast.error("Error in Logout", {
+              position: toast.position,
+            });
+          }
         }
+      } catch (error) {
+        toast.error("Failed to delete member", {
+          position: toast.position,
+        });
       }
-    } catch (error) {
-      toast.error("Failed to delete member", {
-        position: toast.position,
-      });
     }
   };
 
@@ -186,7 +245,10 @@ const MemberSection = () => {
               }}
             >
               <RiDeleteBinLine style={{ fontSize: "20px" }} />
-              &nbsp;{delbtnMessage[idx.current]}
+              &nbsp;
+              {role === "Member" && userRole === "Family Manager"
+                ? "Remove Member"
+                : delbtnMessage[idx.current]}
             </button>
           </div>
         </div>

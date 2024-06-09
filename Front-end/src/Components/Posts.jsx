@@ -107,6 +107,15 @@ const Posts = () => {
       return;
     }
 
+    const file = selectedFiles[0];
+    if (file.size > 200 * 1024) {
+      // 200 KB in bytes
+      toast.error("File size should not exceed 200 KB.", {
+        position: "top-right",
+      });
+      return;
+    }
+
     try {
       const base64 = await convertToBase64(selectedFiles[0]);
       const post = {
@@ -146,24 +155,25 @@ const Posts = () => {
           toast.success("Your Post has been posted", {
             position: "top-right",
           });
-          const updatedResponse = await fetch(
-            "https://backend-intellihome-api.onrender.com/api/blogs/posts",
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-            }
-          );
-          const data = await updatedResponse.json();
-          if (Array.isArray(data)) {
-            setPosts(data);
-          } else {
-            toast.error("Error fetching the updated posts", {
-              position: "top-right",
-            });
-          }
+          // const updatedResponse = await fetch(
+          //   "https://backend-intellihome-api.onrender.com/api/blogs/posts",
+          //   {
+          //     method: "GET",
+          //     headers: {
+          //       "Content-Type": "application/json",
+          //     },
+          //     credentials: "include",
+          //   }
+          // );
+          // const data = await updatedResponse.json();
+          // if (Array.isArray(data)) {
+          //   setPosts(data);
+          // } else {
+          //   toast.error("Error fetching the updated posts", {
+          //     position: "top-right",
+          //   });
+          // }
+          setPosts((posts) => [...posts, post]);
         } else {
           const errorData = await postResponse.json();
           toast.error(errorData.msg, {

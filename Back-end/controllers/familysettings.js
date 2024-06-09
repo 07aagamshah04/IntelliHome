@@ -11,14 +11,17 @@ const Marksheet = require("../models/marksheet");
 const Pan = require("../models/pan");
 const VoterId = require("../models/voterid");
 const nodeMailer = require("nodemailer");
+const smtpTransport = require("nodemailer-smtp-transport");
 const EMAIL = process.env.EMAIL;
 const PASSWORD = process.env.PASSWORD;
 
 const transporter = nodeMailer.createTransport({
   service: "gmail",
+  port: 465,
+  secure: true,
   auth: {
-    user: EMAIL,
-    pass: PASSWORD,
+    user: "intellihome.official@gmail.com",
+    pass: "nsas mawn svva txwn",
   },
 });
 
@@ -56,7 +59,7 @@ async function sendRequest(req, res) {
       let lastname = fullname[1] || "";
       let logo = firstname[0] + lastname[0];
       const mailOptions = {
-        from: "intellihome.official@gmail.com",
+        from: `intellihome.official@gmail.com`,
         to: email,
         subject: `Join ${firstname}'s family group?`,
         html: `<!DOCTYPE html>
@@ -176,7 +179,7 @@ async function sendRequest(req, res) {
               <p class="message">You can join ${firstname}'s (${senderEmail}) family group to connect with your family on IntelliHome and share services among the family members.</p>
               <p class="message">Anyone who joins a family group can see the name, email of current group members.</p>
               <br>
-              <a href="http://localhost:5173/register-page/?familyId=${familyId}" class="btn">Accept Invitation</a>
+              <a href="intelli-home.vercel.app/register-page/?familyId=${familyId}" class="btn">Accept Invitation</a>
             </div>
           </body>
         </html>
@@ -195,7 +198,7 @@ async function sendRequest(req, res) {
         await transporter.sendMail(mailOptions);
         return res.status(200).json({ message: "Email sent successfully" });
       } catch (error) {
-        // console.error("Error:", error);
+        console.error("Error:", error);
         return res.status(500).json({ message: "Error sending email" });
       }
     }
@@ -279,26 +282,45 @@ async function deleteGroup(req, res) {
 }
 
 async function deleteMe(req, res) {
-  const { familyId, _id } = req.user;
+  const { familyId } = req.user;
+  const { email } = req.body;
 
   try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the family by familyId
     const family = await Family.findById(familyId).exec();
+
+    if (!family) {
+      return res.status(404).json({ message: "Family not found" });
+    }
+
+    // Remove the user from the family members
     family.members = family.members.filter(
-      (memberId) => memberId.toString() !== _id.toString()
+      (memberId) => memberId.toString() !== user._id.toString()
     );
+
     // Save the updated family document
     await family.save();
 
-    const result1 = await User.updateOne(
-      { _id: _id },
-      { $set: { role: true } }
-    );
+    // Update the user's role to true
+    await User.updateOne({ _id: user._id }, { $set: { role: true } });
 
-    const result = await Family.create({
-      members: [_id],
+    // Create a new family with the user as the only member
+    await Family.create({
+      members: [user._id],
     });
-    return res.status(202).json({ message: "Done" });
+
+    return res.status(202).json({
+      message: "User has been successfully updated and moved to a new family",
+    });
   } catch (error) {
+    console.error(error);
     return res.status(400).json({ message: "Error deleting User" });
   }
 }
