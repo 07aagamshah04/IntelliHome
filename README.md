@@ -4,10 +4,7 @@ IntelliHome is a sophisticated family management system built with the MERN stac
 
 ## Demo
 
-5. **Blogs**
-
-   ![Blogs](https://github.com/07aagamshah04/IntelliHome/Front-end/src/assets/Blogs.mp4)
-
+Link of youtube coming soon...
 
 ## Features
 
@@ -39,3 +36,19 @@ IntelliHome is a sophisticated family management system built with the MERN stac
 
    ```bash
    git clone https://github.com/07aagamshah04/IntelliHome.git
+   ```
+2. Install Dependencies
+   ```bash
+   npm install
+   ```
+3. Populate .env in main file
+   You'll be needing **following** values
+
+   ```
+   OPEN_API_KEY= (for e.g. chatgpt api key)
+   EMAIL=
+   PASSWORD=
+   MONGO_URL=
+   PORT=
+   SECRET = (for generation of hash password)
+   ```
