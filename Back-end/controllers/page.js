@@ -151,8 +151,15 @@ async function signInUser(req, res) {
 }
 
 async function logoutUser(req, res) {
-  res.clearCookie("token");
-  return res.status(201).json({ msg: "Token deleted" });
+  return res
+    .clearCookie("token", {
+      httpOnly: true,
+      secure: true, // Ensure this is true if your site is served over HTTPS
+      sameSite: "None", // Required for cross-site requests
+      path: "/", // The same path attribute used when setting the cookie
+    })
+    .status(201)
+    .json({ msg: "Token deleted" });
 }
 
 module.exports = {
