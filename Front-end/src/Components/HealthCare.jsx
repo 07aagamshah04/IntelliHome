@@ -11,10 +11,10 @@ const ChatGptTypingLogo =
 const HealthcareChatbot = () => {
   const [responseMarkdown, setResponseMarkdown] = useState("");
   const [input, setInput] = useState({
-    currentSymptoms: "fever",
-    medications: "paracetamol",
-    allergies: "none",
-    vitalSigns: "none",
+    currentSymptoms: "",
+    medications: "",
+    allergies: "",
+    vitalSigns: "",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
