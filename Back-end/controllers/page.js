@@ -54,7 +54,7 @@ async function signInUser(req, res) {
     return res.status(400).json({ msg: "All fields are required" });
   }
 
-  if (body.familyId === "nathi bhai") {
+  if (body.familyId === "nathi bhai"){
     try {
       const token = await User.matchPasswordAndGenerateToken(
         body.email,

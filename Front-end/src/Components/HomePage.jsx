@@ -1,3 +1,4 @@
+import HealthcareChatbot from "./HealthCare";
 import Faqs from "./landingPage/FAQs";
 import Footer from "./landingPage/Footer";
 import Headings from "./landingPage/Headings";
